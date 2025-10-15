@@ -179,6 +179,12 @@ export function Dashboard() {
                 >
                   🏪 Marketplace
                 </button>
+                <button
+                  onClick={() => navigate('/dungeons')}
+                  className="w-full py-2 bg-gradient-to-r from-accent-purple to-accent-red hover:opacity-80 rounded-lg transition-colors font-bold"
+                >
+                  🏰 Dungeons
+                </button>
               </div>
             </div>
           </div>

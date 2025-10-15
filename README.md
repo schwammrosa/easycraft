@@ -43,15 +43,18 @@ EasyCraft é um MMORPG web minimalista que foca em mecânicas de progressão, si
 - [x] Sistema de descanso e gestão de HP
 - [x] Sistema de Crafting (24 receitas)
 - [x] Uso de Itens Consumíveis (Poções)
-- [x] **Marketplace entre jogadores (Economia)** ⭐ **NOVO**
+- [x] Marketplace entre jogadores (Economia)
+- [x] **Sistema de Dungeons (Conteúdo Endgame)** ⭐ **NOVO**
 
-### Roadmap
-- [ ] NPCs compradores (regulação econômica)
+### Fase 2 - Expansão
+- [ ] Mais dungeons (5-10 total)
+- [ ] Sistema de Guildas
+- [ ] PvP Arena
 - [ ] Sistema de chat em tempo real
-- [ ] Rankings e leaderboards
-- [ ] Sistema de guildas
 - [ ] Eventos temporários
-- [ ] Monetização ética (cosméticos)
+- [ ] Achievements
+- [ ] Rankings globais
+- [ ] Deploy em produção
 
 ---
 

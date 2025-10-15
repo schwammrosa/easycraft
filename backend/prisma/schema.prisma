@@ -60,8 +60,9 @@ model Character {
   equipment     Equipment[]
   battles       Battle[]
   quests        CharacterQuest[]
-  sellerListings MarketplaceListing[] @relation("SellerListings")
-  buyerListings  MarketplaceListing[] @relation("BuyerListings")
+  sellListings  MarketplaceListing[] @relation("SellerListings")
+  buyListings   MarketplaceListing[] @relation("BuyerListings")
+  dungeonRuns   DungeonRun[]
   
   @@map("characters")
   @@index([userId])
@@ -204,19 +205,21 @@ model Battle {
 // =====================================================
 
 model Enemy {
-  id          Int      @id @default(autoincrement())
-  code        String   @unique
-  name        String
-  description String?
-  level       Int
-  hp          Int
-  str         Int
-  agi         Int
-  def         Int
-  xpReward    Int      @map("xp_reward")
-  goldReward  Int      @map("gold_reward")
-  dropTable   Json     @default("{}") @map("drop_table")
-  createdAt   DateTime @default(now()) @map("created_at")
+  id            Int             @id @default(autoincrement())
+  code          String          @unique
+  name          String
+  description   String?
+  level         Int
+  hp            Int
+  str           Int
+  agi           Int
+  def           Int
+  xpReward      Int             @map("xp_reward")
+  goldReward    Int             @map("gold_reward")
+  dropTable     Json            @default("{}") @map("drop_table")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  
+  dungeonFloors DungeonFloor[]
   
   @@map("enemies")
   @@index([level])
@@ -367,4 +370,83 @@ model MarketplaceListing {
   @@index([status])
   @@index([pricePerUnit])
   @@index([createdAt])
+}
+
+// =====================================================
+// DUNGEONS
+// =====================================================
+
+enum DungeonDifficulty {
+  easy
+  normal
+  hard
+}
+
+enum DungeonRunStatus {
+  in_progress
+  completed
+  failed
+}
+
+model Dungeon {
+  id                Int               @id @default(autoincrement())
+  code              String            @unique
+  name              String
+  description       String
+  recommendedLevel  Int               @map("recommended_level")
+  maxFloors         Int               @map("max_floors")
+  cooldownHours     Int               @default(24) @map("cooldown_hours")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  
+  floors            DungeonFloor[]
+  runs              DungeonRun[]
+  
+  @@map("dungeons")
+  @@index([recommendedLevel])
+}
+
+model DungeonFloor {
+  id            Int       @id @default(autoincrement())
+  dungeonId     Int       @map("dungeon_id")
+  floorNumber   Int       @map("floor_number")
+  isBoss        Boolean   @default(false) @map("is_boss")
+  enemyId       Int       @map("enemy_id")
+  enemyCount    Int       @default(1) @map("enemy_count")
+  goldReward    Int       @default(0) @map("gold_reward")
+  expReward     Int       @default(0) @map("exp_reward")
+  itemDrops     Json      @default("[]") @map("item_drops")
+  
+  dungeon       Dungeon   @relation(fields: [dungeonId], references: [id], onDelete: Cascade)
+  enemy         Enemy     @relation(fields: [enemyId], references: [id])
+  
+  @@map("dungeon_floors")
+  @@unique([dungeonId, floorNumber])
+  @@index([dungeonId])
+  @@index([isBoss])
+}
+
+model DungeonRun {
+  id                Int                 @id @default(autoincrement())
+  characterId       Int                 @map("character_id")
+  dungeonId         Int                 @map("dungeon_id")
+  difficulty        DungeonDifficulty   @default(normal)
+  currentFloor      Int                 @default(1) @map("current_floor")
+  status            DungeonRunStatus    @default(in_progress)
+  startedAt         DateTime            @default(now()) @map("started_at")
+  completedAt       DateTime?           @map("completed_at")
+  timeElapsed       Int                 @default(0) @map("time_elapsed")
+  totalDamageDealt  Int                 @default(0) @map("total_damage_dealt")
+  totalDamageTaken  Int                 @default(0) @map("total_damage_taken")
+  goldEarned        Int                 @default(0) @map("gold_earned")
+  expEarned         Int                 @default(0) @map("exp_earned")
+  itemsObtained     Json                @default("[]") @map("items_obtained")
+  
+  character         Character           @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  dungeon           Dungeon             @relation(fields: [dungeonId], references: [id])
+  
+  @@map("dungeon_runs")
+  @@index([characterId])
+  @@index([dungeonId])
+  @@index([status])
+  @@index([completedAt])
 }

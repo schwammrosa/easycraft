@@ -35,6 +35,7 @@ import battleRoutes from './modules/battle/battle.routes';
 import questRoutes from './modules/quest/quest.routes';
 import craftingRoutes from './modules/crafting/crafting.routes';
 import marketplaceRoutes from './modules/marketplace/marketplace.routes';
+import dungeonRoutes from './modules/dungeon/dungeon.routes';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/characters', characterRoutes);
@@ -44,6 +45,7 @@ app.use('/api/battle', battleRoutes);
 app.use('/api/quest', questRoutes);
 app.use('/api/crafting', craftingRoutes);
 app.use('/api/marketplace', marketplaceRoutes);
+app.use('/api/dungeons', dungeonRoutes);
 
 // Error handling
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

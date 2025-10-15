@@ -9,6 +9,7 @@ import { Battle } from './pages/Battle';
 import { Quests } from './pages/Quests';
 import { Crafting } from './pages/Crafting';
 import { Marketplace } from './pages/Marketplace';
+import { Dungeons } from './pages/Dungeons';
 import { PrivateRoute } from './components/PrivateRoute';
 
 function App() {
@@ -87,6 +88,15 @@ function App() {
           element={
             <PrivateRoute>
               <Marketplace />
+            </PrivateRoute>
+          }
+        />
+        
+        <Route
+          path="/dungeons"
+          element={
+            <PrivateRoute>
+              <Dungeons />
             </PrivateRoute>
           }
         />
