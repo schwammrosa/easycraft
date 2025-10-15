@@ -56,9 +56,15 @@ export const inventoryService = {
   },
 
   async unequipItem(characterId: number, slot: string): Promise<void> {
-    await api.post(`/inventory/${characterId}/unequip`, {
-      slot,
-    });
+    await api.post(`/inventory/${characterId}/unequip`, { slot });
+  },
+
+  async useItem(characterId: number, inventoryId: number) {
+    const response = await api.post<ApiResponse<{ result: UseItemResult }>>(
+      `/inventory/${characterId}/use`,
+      { inventoryId }
+    );
+    return response.data.data!.result;
   },
 
   async getAllItems(): Promise<Item[]> {
@@ -66,3 +72,12 @@ export const inventoryService = {
     return response.data.data!.items;
   },
 };
+
+export interface UseItemResult {
+  success: boolean;
+  message: string;
+  effect?: {
+    hpRestored?: number;
+    buffApplied?: string;
+  };
+}

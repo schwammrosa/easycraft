@@ -21,6 +21,8 @@ export function Inventory() {
   const [error, setError] = useState('');
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [equipping, setEquipping] = useState(false);
+  const [using, setUsing] = useState(false);
+  const [useResult, setUseResult] = useState<any>(null);
 
   useEffect(() => {
     if (!selectedCharacter) {
@@ -88,6 +90,32 @@ export function Inventory() {
       setError('');
     } catch (err: any) {
       setError(err.response?.data?.error?.message || 'Erro ao desequipar item');
+    }
+  };
+
+  const handleUseItem = async (item: InventoryItem) => {
+    if (using || !selectedCharacter) return;
+
+    setUsing(true);
+    setError('');
+
+    try {
+      const result = await inventoryService.useItem(selectedCharacter.id, item.id);
+      setUseResult(result);
+
+      // Reload data to update HP and inventory
+      const [updatedChar, inventoryData] = await Promise.all([
+        characterService.getCharacter(selectedCharacter.id),
+        inventoryService.getInventory(selectedCharacter.id),
+      ]);
+      selectCharacter(updatedChar);
+      setInventory(inventoryData);
+      setSelectedItem(null);
+    } catch (err: any) {
+      console.error('Use item error:', err.response?.data);
+      setError(err.response?.data?.error?.message || 'Erro ao usar item');
+    } finally {
+      setUsing(false);
     }
   };
 
@@ -247,6 +275,23 @@ export function Inventory() {
                           {equipping ? 'Equipando...' : 'Equipar'}
                         </button>
                       )}
+                      
+                      {item.item.type === 'consumable' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleUseItem(item);
+                          }}
+                          disabled={using}
+                          className={`w-full mt-2 py-1 rounded text-xs ${
+                            using 
+                              ? 'bg-gray-600 cursor-not-allowed opacity-50' 
+                              : 'bg-accent-green hover:bg-opacity-80'
+                          }`}
+                        >
+                          {using ? 'Usando...' : 'Usar'}
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -328,6 +373,44 @@ export function Inventory() {
                   Fechar
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Use Item Result Modal */}
+        {useResult && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-bg-panel rounded-lg p-8 max-w-md w-full">
+              <h2 className="text-2xl font-bold text-center mb-6 text-accent-green">
+                ✅ Item Usado!
+              </h2>
+
+              <p className="text-center mb-6">{useResult.message}</p>
+
+              {useResult.effect && (
+                <div className="space-y-3 mb-6">
+                  {useResult.effect.hpRestored !== undefined && (
+                    <div className="flex justify-between text-lg bg-accent-green/10 border border-accent-green rounded-lg p-3">
+                      <span>HP Restaurado:</span>
+                      <span className="text-accent-green font-bold">+{useResult.effect.hpRestored}</span>
+                    </div>
+                  )}
+                  {useResult.effect.buffApplied && (
+                    <div className="bg-accent-blue/10 border border-accent-blue rounded-lg p-3">
+                      <p className="font-bold text-center text-accent-blue">
+                        Buff: {useResult.effect.buffApplied}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <button
+                onClick={() => setUseResult(null)}
+                className="w-full py-3 bg-accent-green hover:bg-opacity-80 rounded-lg font-semibold"
+              >
+                Continuar
+              </button>
             </div>
           </div>
         )}

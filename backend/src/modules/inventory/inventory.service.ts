@@ -1,5 +1,5 @@
 import { PrismaClient, EquipmentSlot, Inventory, Item } from '@prisma/client';
-import { GiveItemDTO, EquipItemDTO } from './inventory.types';
+import { GiveItemDTO, EquipItemDTO, UseItemDTO, UseItemResult } from './inventory.types';
 import { questService } from '../quest/quest.service';
 import { logger } from '../../config/logger';
 
@@ -252,6 +252,89 @@ export class InventoryService {
         totalDef,
       },
     });
+  }
+
+  async useItem(characterId: number, data: UseItemDTO): Promise<UseItemResult> {
+    const { inventoryId } = data;
+
+    logger.info(`Using item: characterId=${characterId}, inventoryId=${inventoryId}`);
+
+    // Get inventory item
+    const inventoryItem = await prisma.inventory.findFirst({
+      where: {
+        id: inventoryId,
+        characterId,
+      },
+      include: { item: true },
+    });
+
+    if (!inventoryItem) {
+      throw new Error('Item não encontrado no inventário');
+    }
+
+    // Check if item is consumable
+    if (inventoryItem.item.type !== 'consumable') {
+      throw new Error('Este item não pode ser usado');
+    }
+
+    // Get character
+    const character = await prisma.character.findUnique({
+      where: { id: characterId },
+    });
+
+    if (!character) {
+      throw new Error('Personagem não encontrado');
+    }
+
+    // Apply item effects based on attributes
+    const attributes = inventoryItem.item.attributes as any;
+    let message = '';
+    const effect: any = {};
+
+    // HP Healing
+    if (attributes.healAmount) {
+      const currentHp = character.hp;
+      const maxHp = character.maxHp;
+      const healAmount = attributes.healAmount;
+      const newHp = Math.min(currentHp + healAmount, maxHp);
+      const actualHeal = newHp - currentHp;
+
+      await prisma.character.update({
+        where: { id: characterId },
+        data: { hp: newHp },
+      });
+
+      effect.hpRestored = actualHeal;
+      message = `Você usou ${inventoryItem.item.name} e recuperou ${actualHeal} HP!`;
+      
+      logger.info(`HP restored: ${actualHeal} (${currentHp} -> ${newHp})`);
+    }
+
+    // Buffs (future implementation)
+    if (attributes.buff) {
+      effect.buffApplied = attributes.buff;
+      message += ` Buff ${attributes.buff} aplicado!`;
+    }
+
+    // Consume item
+    if (inventoryItem.quantity > 1) {
+      await prisma.inventory.update({
+        where: { id: inventoryItem.id },
+        data: { quantity: inventoryItem.quantity - 1 },
+      });
+    } else {
+      await prisma.inventory.delete({
+        where: { id: inventoryItem.id },
+      });
+    }
+
+    logger.info(`Item used successfully: ${inventoryItem.item.name}`);
+
+    return {
+      success: true,
+      message: message || `Você usou ${inventoryItem.item.name}!`,
+      effect,
+    };
   }
 }
 

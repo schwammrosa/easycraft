@@ -35,4 +35,11 @@ router.post('/:characterId/equip', (req, res) => inventoryController.equipItem(r
  */
 router.post('/:characterId/unequip', (req, res) => inventoryController.unequipItem(req, res));
 
+/**
+ * @route   POST /api/inventory/:characterId/use
+ * @desc    Use a consumable item
+ * @access  Private
+ */
+router.post('/:characterId/use', (req, res) => inventoryController.useItem(req, res));
+
 export default router;

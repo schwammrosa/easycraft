@@ -17,3 +17,16 @@ export interface GiveItemDTO {
   itemCode: string;
   quantity: number;
 }
+
+export interface UseItemDTO {
+  inventoryId: number;
+}
+
+export interface UseItemResult {
+  success: boolean;
+  message: string;
+  effect?: {
+    hpRestored?: number;
+    buffApplied?: string;
+  };
+}

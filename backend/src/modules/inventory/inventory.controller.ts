@@ -165,6 +165,53 @@ export class InventoryController {
       });
     }
   }
+
+  async useItem(req: Request, res: Response): Promise<void> {
+    try {
+      const characterId = parseInt(req.params.characterId);
+
+      if (isNaN(characterId)) {
+        res.status(400).json({
+          success: false,
+          error: {
+            code: 'INVALID_ID',
+            message: 'ID do personagem inválido',
+          },
+        });
+        return;
+      }
+
+      const result = await inventoryService.useItem(characterId, req.body);
+
+      logger.info(`Item used by character ${characterId}: ${result.message}`);
+
+      res.json({
+        success: true,
+        data: { result },
+      });
+    } catch (error) {
+      logger.error('Use item error:', error);
+
+      if (error instanceof Error) {
+        res.status(400).json({
+          success: false,
+          error: {
+            code: 'USE_ITEM_ERROR',
+            message: error.message,
+          },
+        });
+        return;
+      }
+
+      res.status(500).json({
+        success: false,
+        error: {
+          code: 'INTERNAL_ERROR',
+          message: 'Erro ao usar item',
+        },
+      });
+    }
+  }
 }
 
 export const inventoryController = new InventoryController();
