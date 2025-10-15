@@ -153,16 +153,22 @@ export function Dashboard() {
                   onClick={() => navigate('/battle')}
                   className="w-full py-2 bg-accent-red hover:bg-opacity-80 rounded-lg transition-colors"
                 >
-                  Batalha
+                  ⚔️ Batalha
+                </button>
+                <button
+                  onClick={() => navigate('/quests')}
+                  className="w-full py-2 bg-accent-blue hover:bg-opacity-80 rounded-lg transition-colors"
+                >
+                  🎯 Missões
                 </button>
                 <button
                   onClick={() => navigate('/inventory')}
                   className="w-full py-2 bg-accent-green hover:bg-opacity-80 rounded-lg transition-colors"
                 >
-                  Inventário
+                  🎒 Inventário
                 </button>
                 <button className="w-full py-2 bg-accent-purple rounded-lg opacity-50 cursor-not-allowed">
-                  Mercado (Em breve)
+                  🏪 Mercado (Em breve)
                 </button>
               </div>
             </div>

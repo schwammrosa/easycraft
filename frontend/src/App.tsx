@@ -6,6 +6,7 @@ import { CharacterCreation } from './pages/CharacterCreation';
 import { Dashboard } from './pages/Dashboard';
 import { Inventory } from './pages/Inventory';
 import { Battle } from './pages/Battle';
+import { Quests } from './pages/Quests';
 import { PrivateRoute } from './components/PrivateRoute';
 
 function App() {
@@ -57,6 +58,15 @@ function App() {
           element={
             <PrivateRoute>
               <Battle />
+            </PrivateRoute>
+          }
+        />
+        
+        <Route
+          path="/quests"
+          element={
+            <PrivateRoute>
+              <Quests />
             </PrivateRoute>
           }
         />

@@ -1,7 +1,12 @@
-import { PrismaClient, EquipmentSlot } from '@prisma/client';
-import { InventoryWithItem, EquipItemDTO, GiveItemDTO } from './inventory.types';
+import { PrismaClient, EquipmentSlot, Inventory, Item } from '@prisma/client';
+import { GiveItemDTO, EquipItemDTO } from './inventory.types';
+import { questService } from '../quest/quest.service';
 
 const prisma = new PrismaClient();
+
+type InventoryWithItem = Inventory & {
+  item: Item;
+};
 
 export class InventoryService {
   async getInventory(characterId: number): Promise<InventoryWithItem[]> {
@@ -99,6 +104,11 @@ export class InventoryService {
 
     // Recalculate stats
     await this.recalculateStats(characterId);
+
+    // Update quest progress
+    await questService.updateQuestProgress(characterId, {
+      type: 'equip_item',
+    });
   }
 
   async unequipItem(characterId: number, slot: string): Promise<void> {

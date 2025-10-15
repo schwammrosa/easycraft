@@ -59,6 +59,7 @@ model Character {
   inventory     Inventory[]
   equipment     Equipment[]
   battles       Battle[]
+  quests        CharacterQuest[]
   
   @@map("characters")
   @@index([userId])
@@ -216,6 +217,70 @@ model Enemy {
   
   @@map("enemies")
   @@index([level])
+}
+
+// =====================================================
+// QUESTS
+// =====================================================
+
+enum QuestType {
+  kill_enemies
+  collect_items
+  reach_level
+  equip_items
+  earn_gold
+  complete_battles
+}
+
+enum QuestRarity {
+  common
+  rare
+  epic
+  legendary
+}
+
+model Quest {
+  id              Int               @id @default(autoincrement())
+  code            String            @unique
+  name            String
+  description     String
+  type            QuestType
+  rarity          QuestRarity       @default(common)
+  targetAmount    Int               @map("target_amount")
+  targetData      Json?             @map("target_data")
+  xpReward        Int               @map("xp_reward")
+  goldReward      Int               @map("gold_reward")
+  itemRewards     Json?             @map("item_rewards")
+  isRepeatable    Boolean           @default(false) @map("is_repeatable")
+  cooldownHours   Int?              @map("cooldown_hours")
+  requiredLevel   Int               @default(1) @map("required_level")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  
+  characterQuests CharacterQuest[]
+  
+  @@map("quests")
+  @@index([type])
+  @@index([rarity])
+}
+
+model CharacterQuest {
+  id            Int       @id @default(autoincrement())
+  characterId   Int       @map("character_id")
+  questId       Int       @map("quest_id")
+  progress      Int       @default(0)
+  completed     Boolean   @default(false)
+  claimed       Boolean   @default(false)
+  startedAt     DateTime  @default(now()) @map("started_at")
+  completedAt   DateTime? @map("completed_at")
+  claimedAt     DateTime? @map("claimed_at")
+  
+  character     Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  quest         Quest     @relation(fields: [questId], references: [id])
+  
+  @@unique([characterId, questId])
+  @@map("character_quests")
+  @@index([characterId])
+  @@index([completed])
 }
 
 // =====================================================

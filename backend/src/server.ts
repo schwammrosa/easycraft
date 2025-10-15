@@ -29,12 +29,14 @@ import characterRoutes from './modules/character/character.routes';
 import inventoryRoutes from './modules/inventory/inventory.routes';
 import itemRoutes from './modules/item/item.routes';
 import battleRoutes from './modules/battle/battle.routes';
+import questRoutes from './modules/quest/quest.routes';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/characters', characterRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/battle', battleRoutes);
+app.use('/api/quest', questRoutes);
 
 // Error handling
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

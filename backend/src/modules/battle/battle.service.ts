@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { BattleResult, BattleTurn, StartBattleDTO, DropResult, BattleStats } from './battle.types';
 import { inventoryService } from '../inventory/inventory.service';
+import { questService } from '../quest/quest.service';
 
 const prisma = new PrismaClient();
 
@@ -74,13 +75,20 @@ export class BattleService {
       const newLevel = Math.floor(newXp / XP_PER_LEVEL) + 1;
       const leveledUp = newLevel > character.level;
 
+      // Calculate HP after battle (get from last turn)
+      const lastTurn = battleResult.turns[battleResult.turns.length - 1];
+      const charHpRemaining = lastTurn.attacker === character.name
+        ? lastTurn.attackerHpRemaining
+        : lastTurn.defenderHpRemaining;
+      const hpAfterBattle = Math.max(1, Math.floor(charHpRemaining));
+
       await prisma.character.update({
         where: { id: characterId },
         data: {
           xp: newXp,
           gold: newGold,
           level: newLevel,
-          hp: character.maxHp, // Restaura HP após vitória
+          hp: hpAfterBattle, // Mantém o HP após batalha (use Descansar para recuperar)
         },
       });
 
@@ -108,6 +116,20 @@ export class BattleService {
           quantity: drop.quantity,
         });
       }
+
+      // Update quest progress
+      await questService.updateQuestProgress(characterId, {
+        type: 'kill_enemy',
+        data: { enemyCode: enemy.code },
+      });
+
+      await questService.updateQuestProgress(characterId, {
+        type: 'complete_battle',
+      });
+
+      await questService.updateQuestProgress(characterId, {
+        type: 'earn_gold',
+      });
     } else {
       // Defeat - lose HP
       await prisma.character.update({
@@ -121,14 +143,11 @@ export class BattleService {
     return battleResult;
   }
 
-  async getEnemiesByLevel(minLevel: number, maxLevel: number) {
+  async getEnemiesByLevel(_minLevel: number, _maxLevel: number) {
+    // Retorna TODOS os inimigos para permitir completar quests
+    // Jogadores podem escolher lutar contra inimigos mais fracos se quiserem
+    // Parâmetros ignorados intencionalmente (prefixo _)
     return await prisma.enemy.findMany({
-      where: {
-        level: {
-          gte: minLevel,
-          lte: maxLevel,
-        },
-      },
       orderBy: { level: 'asc' },
     });
   }
