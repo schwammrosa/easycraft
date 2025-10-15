@@ -62,6 +62,8 @@ model Character {
   quests        CharacterQuest[]
   sellListings  MarketplaceListing[] @relation("SellerListings")
   buyListings   MarketplaceListing[] @relation("BuyerListings")
+  salesTransactions   MarketplaceTransaction[] @relation("SellerTransactions")
+  purchaseTransactions MarketplaceTransaction[] @relation("BuyerTransactions")
   dungeonRuns   DungeonRun[]
   
   @@map("characters")
@@ -129,6 +131,7 @@ model Item {
   
   inventory     Inventory[]
   marketplaceListings MarketplaceListing[]
+  transactions  MarketplaceTransaction[]
   
   @@map("items")
   @@index([code])
@@ -363,12 +366,37 @@ model MarketplaceListing {
   seller          Character           @relation("SellerListings", fields: [sellerId], references: [id], onDelete: Cascade)
   buyer           Character?          @relation("BuyerListings", fields: [buyerId], references: [id])
   item            Item                @relation(fields: [itemId], references: [id])
+  transactions    MarketplaceTransaction[]
   
   @@map("marketplace_listings")
   @@index([sellerId])
   @@index([itemId])
   @@index([status])
   @@index([pricePerUnit])
+  @@index([createdAt])
+}
+
+// Marketplace Transactions (Buy/Sell History)
+model MarketplaceTransaction {
+  id           Int      @id @default(autoincrement())
+  listingId    Int      @map("listing_id")
+  sellerId     Int      @map("seller_id")
+  buyerId      Int      @map("buyer_id")
+  itemId       Int      @map("item_id")
+  quantity     Int
+  pricePerUnit Int      @map("price_per_unit")
+  totalPrice   Int      @map("total_price")
+  commission   Int
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  listing MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  seller  Character          @relation("SellerTransactions", fields: [sellerId], references: [id], onDelete: Cascade)
+  buyer   Character          @relation("BuyerTransactions", fields: [buyerId], references: [id], onDelete: Cascade)
+  item    Item               @relation(fields: [itemId], references: [id])
+
+  @@map("marketplace_transactions")
+  @@index([buyerId])
+  @@index([sellerId])
   @@index([createdAt])
 }
 

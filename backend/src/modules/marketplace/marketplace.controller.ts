@@ -209,6 +209,33 @@ export class MarketplaceController {
       });
     }
   }
+
+  async getHistory(req: Request, res: Response): Promise<void> {
+    try {
+      const characterId = parseInt(req.params.characterId);
+      const type = (req.query.type as 'purchases' | 'sales') || 'purchases';
+      const page = req.query.page ? parseInt(req.query.page as string) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
+
+      if (isNaN(characterId)) {
+        res.status(400).json({
+          success: false,
+          error: { code: 'INVALID_ID', message: 'ID do personagem inválido' },
+        });
+        return;
+      }
+
+      const data = await marketplaceService.getHistory(characterId, type, page, limit);
+
+      res.json({ success: true, data });
+    } catch (error) {
+      logger.error('Get marketplace history error:', error);
+      res.status(500).json({
+        success: false,
+        error: { code: 'INTERNAL_ERROR', message: 'Erro ao buscar histórico' },
+      });
+    }
+  }
 }
 
 export const marketplaceController = new MarketplaceController();

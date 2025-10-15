@@ -39,6 +39,14 @@ router.post('/:characterId/create', (req, res) => marketplaceController.createLi
 router.post('/:characterId/buy', (req, res) => marketplaceController.buyListing(req, res));
 
 /**
+ * @route   GET /api/marketplace/history/:characterId
+ * @desc    Get purchase/sales history for a character
+ * @access  Private
+ * @query   type=purchases|sales, page, limit
+ */
+router.get('/history/:characterId', (req, res) => marketplaceController.getHistory(req, res));
+
+/**
  * @route   DELETE /api/marketplace/:characterId/:listingId
  * @desc    Cancel a listing
  * @access  Private

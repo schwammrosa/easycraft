@@ -234,6 +234,8 @@ export class MarketplaceService {
 
     // Execute transaction
     await prisma.$transaction(async (tx) => {
+      // Permitimos comprar duplicatas mesmo para itens não empilháveis.
+      // maxStack será respeitado apenas na lógica de equipar, não na compra.
       // If buying all items, mark as sold
       if (quantity === listing.quantity) {
         await tx.marketplaceListing.update({
@@ -268,28 +270,25 @@ export class MarketplaceService {
         data: { gold: { increment: sellerReceives } },
       });
 
-      // Give item to buyer
-      const existingItem = await tx.inventory.findFirst({
-        where: {
-          characterId,
-          itemId: listing.itemId,
-        },
+      // Give item to buyer – atomic upsert avoids unique constraint and race conditions
+      await tx.inventory.upsert({
+        where: { characterId_itemId: { characterId, itemId: listing.itemId } },
+        update: { quantity: { increment: quantity } },
+        create: { characterId, itemId: listing.itemId, quantity },
       });
 
-      if (existingItem && listing.item.maxStack > 1) {
-        await tx.inventory.update({
-          where: { id: existingItem.id },
-          data: { quantity: existingItem.quantity + quantity },
-        });
-      } else {
-        await tx.inventory.create({
-          data: {
-            characterId,
-            itemId: listing.itemId,
-            quantity: quantity,
-          },
-        });
-      }
+      await tx.marketplaceTransaction.create({
+        data: {
+          listingId,
+          sellerId: listing.sellerId,
+          buyerId: characterId,
+          itemId: listing.itemId,
+          quantity,
+          pricePerUnit: listing.pricePerUnit,
+          totalPrice,
+          commission,
+        },
+      });
     });
 
     logger.info(`Listing purchased: id=${listingId}, quantity=${quantity} by character ${characterId}`);
@@ -323,28 +322,12 @@ export class MarketplaceService {
         data: { status: 'cancelled' },
       });
 
-      // Return items to seller
-      const existingItem = await tx.inventory.findFirst({
-        where: {
-          characterId,
-          itemId: listing.itemId,
-        },
+      // Return items to seller – atomic upsert avoids unique constraint and race conditions
+      await tx.inventory.upsert({
+        where: { characterId_itemId: { characterId, itemId: listing.itemId } },
+        update: { quantity: { increment: listing.quantity } },
+        create: { characterId, itemId: listing.itemId, quantity: listing.quantity },
       });
-
-      if (existingItem) {
-        await tx.inventory.update({
-          where: { id: existingItem.id },
-          data: { quantity: existingItem.quantity + listing.quantity },
-        });
-      } else {
-        await tx.inventory.create({
-          data: {
-            characterId,
-            itemId: listing.itemId,
-            quantity: listing.quantity,
-          },
-        });
-      }
     });
 
     logger.info(`Listing cancelled: id=${listingId}`);
@@ -375,6 +358,27 @@ export class MarketplaceService {
     });
 
     return listings as MarketplaceListingWithDetails[];
+  }
+
+  async getHistory(characterId: number, type: 'purchases' | 'sales', page = 1, limit = 20) {
+    const where = type === 'purchases' ? { buyerId: characterId } : { sellerId: characterId };
+
+    const total = await prisma.marketplaceTransaction.count({ where });
+
+    const transactions = await prisma.marketplaceTransaction.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * limit,
+      take: limit,
+      include: {
+        item: true,
+        listing: { select: { id: true } },
+        buyer: { select: { id: true, name: true } },
+        seller: { select: { id: true, name: true } },
+      },
+    });
+
+    return { transactions, total, page, totalPages: Math.ceil(total / limit) };
   }
 }
 

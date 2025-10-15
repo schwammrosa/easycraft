@@ -50,6 +50,31 @@ export interface MarketplaceResponse {
   totalPages: number;
 }
 
+export interface MarketplaceTransaction {
+  id: number;
+  listingId: number;
+  sellerId: number;
+  buyerId: number;
+  itemId: number;
+  quantity: number;
+  pricePerUnit: number;
+  totalPrice: number;
+  commission: number;
+  createdAt: string;
+  item: {
+    id: number;
+    code: string;
+    name: string;
+    description?: string;
+    type: string;
+    baseValue: number;
+    imagePath?: string;
+  };
+  listing: { id: number };
+  buyer: { id: number; name: string };
+  seller: { id: number; name: string };
+}
+
 export const marketplaceService = {
   async getListings(filters?: MarketplaceFilters): Promise<MarketplaceResponse> {
     const params = new URLSearchParams();
@@ -90,5 +115,21 @@ export const marketplaceService = {
       `/marketplace/my/${characterId}`
     );
     return response.data.data!.listings;
+  },
+
+  async getHistory(
+    characterId: number,
+    type: 'purchases' | 'sales',
+    page = 1,
+    limit = 20
+  ): Promise<{ transactions: MarketplaceTransaction[]; total: number; page: number; totalPages: number }> {
+    const params = new URLSearchParams();
+    params.set('type', type);
+    params.set('page', String(page));
+    params.set('limit', String(limit));
+    const response = await api.get<ApiResponse<{ transactions: MarketplaceTransaction[]; total: number; page: number; totalPages: number }>>(
+      `/marketplace/history/${characterId}?${params}`
+    );
+    return response.data.data!;
   },
 };
