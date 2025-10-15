@@ -4,8 +4,8 @@
 
 ![Version](https://img.shields.io/badge/version-1.0.0--alpha-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Status](https://img.shields.io/badge/status-playable-brightgreen)
-![Progress](https://img.shields.io/badge/progress-90%25-success)
+![Status](https://img.shields.io/badge/status-MVP_COMPLETE-brightgreen)
+![Progress](https://img.shields.io/badge/progress-100%25-success)
 
 **Um MMORPG baseado em navegador focado em progressão e economia, sem complexidade gráfica**
 
@@ -32,17 +32,18 @@ EasyCraft é um MMORPG web minimalista que foca em mecânicas de progressão, si
 
 ## ✨ Features
 
-### MVP (Fase 1) - ✅ COMPLETO!
+### MVP (Fase 1) - ✅ 100% COMPLETO! 🎉
 - [x] Sistema de autenticação (JWT)
 - [x] Criação de personagens (3 classes)
-- [x] Sistema de inventário (40 itens)
-- [x] Sistema de equipamentos (6 slots)
+- [x] Sistema de inventário (59 itens)
+- [x] Sistema de equipamentos (5 slots)
 - [x] Combates turn-based automáticos (10 inimigos)
 - [x] Sistema de XP e level up
 - [x] Sistema de Quests (19 missões)
 - [x] Sistema de descanso e gestão de HP
-- [ ] Sistema de craft básico
-- [ ] Marketplace entre jogadores
+- [x] Sistema de Crafting (24 receitas)
+- [x] Uso de Itens Consumíveis (Poções)
+- [x] **Marketplace entre jogadores (Economia)** ⭐ **NOVO**
 
 ### Roadmap
 - [ ] NPCs compradores (regulação econômica)
@@ -172,11 +173,14 @@ easycraft/
 ## 📚 Documentação
 
 ### Para Desenvolvedores
-- [Status do Projeto](docs/PROJECT_STATUS.md) ⭐ **NOVO**
+- [Status do Projeto](docs/PROJECT_STATUS.md)
 - [Sprint 1 - Auth & Personagens](docs/SPRINT1_COMPLETE.md)
 - [Sprint 2 - Inventário](docs/SPRINT2_COMPLETE.md)
 - [Sprint 3 - Batalhas](docs/SPRINT3_COMPLETE.md)
-- [Sprint 4 - Quests](docs/SPRINT4_COMPLETE.md) ⭐ **NOVO**
+- [Sprint 4 - Quests](docs/SPRINT4_COMPLETE.md)
+- [Sprint 5 - Crafting & Consumíveis](docs/SPRINT5_COMPLETE.md)
+- [Sprint 6 - Marketplace](docs/SPRINT6_MARKETPLACE.md) ⭐ **NOVO**
+- [Comandos de Teste](backend/prisma/TEST_COMMANDS.md)
 - [Database Schema](docs/05_database_schema.sql)
 
 ### Para Designers

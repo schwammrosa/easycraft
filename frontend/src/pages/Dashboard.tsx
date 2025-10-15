@@ -173,8 +173,11 @@ export function Dashboard() {
                 >
                   🎒 Inventário
                 </button>
-                <button className="w-full py-2 bg-bg-panel rounded-lg opacity-50 cursor-not-allowed">
-                  🏪 Mercado (Em breve)
+                <button
+                  onClick={() => navigate('/marketplace')}
+                  className="w-full py-2 bg-accent-gold hover:bg-opacity-80 rounded-lg transition-colors"
+                >
+                  🏪 Marketplace
                 </button>
               </div>
             </div>

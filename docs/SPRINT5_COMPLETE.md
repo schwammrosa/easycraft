@@ -1,18 +1,20 @@
-# 🔨 SPRINT 5 - SISTEMA DE CRAFTING - COMPLETO
+# 🔨 SPRINT 5 - SISTEMA DE CRAFTING & CONSUMÍVEIS - COMPLETO
 
 **Data:** 15/10/2025  
-**Status:** ✅ PRODUCTION READY
+**Status:** ✅ PRODUCTION READY  
+**Duração:** ~4 horas
 
 ---
 
 ## 📋 Sumário Executivo
 
-Sistema completo de crafting implementado com:
+Sistema completo de crafting e uso de consumíveis implementado com:
 - ✅ **24 receitas** de crafting
 - ✅ **59 itens** no banco de dados
 - ✅ **5 categorias** (Armas, Armaduras, Consumíveis, Materiais, Aprimoramentos)
 - ✅ Sistema de **taxa de sucesso** (65% a 100%)
 - ✅ **Integração completa** com inventário
+- ✅ **Sistema de uso de itens** (Poções de HP)
 - ✅ Scripts de teste automatizados
 
 ---
@@ -285,9 +287,39 @@ npx ts-node prisma/seed-crafting-items.ts
 
 ---
 
+## 🧪 Sistema de Uso de Itens Consumíveis
+
+### Funcionalidades Implementadas:
+
+#### Backend (3 arquivos)
+- ✅ Novo endpoint: `POST /api/inventory/:characterId/use`
+- ✅ Validação de tipo (apenas consumíveis)
+- ✅ Sistema de cura de HP baseado em `healAmount`
+- ✅ Suporte para buffs futuros
+- ✅ Consumo automático do item
+
+#### Frontend (2 arquivos)
+- ✅ Botão "Usar" verde em consumíveis
+- ✅ Modal de resultado mostrando efeitos
+- ✅ Atualização automática de HP
+- ✅ Proteção contra cliques múltiplos
+
+### Efeitos Suportados:
+- ✅ **healAmount**: Restaura HP (ex: Poções)
+- 🔮 **buff**: Preparado para implementação futura
+
+### Itens Consumíveis:
+| Item | Efeito | Como Obter |
+|------|--------|------------|
+| Poção Pequena de HP | +20 HP | Crafting (5x Herb + 1x Magic Essence) |
+| Poção Média de HP | +50 HP | Crafting (8x Herb + 2x Magic Essence + 1x Crystal) |
+| Poção Grande de HP | +100 HP | Crafting (12x Herb + 4x Magic Essence + 2x Crystal + 1x Dragon Scale) |
+
+---
+
 **🎉 SPRINT 5 - COMPLETA E TESTADA!**
 
 **Desenvolvedor:** AI Assistant + User  
-**Tempo de Desenvolvimento:** ~3 horas  
-**Linhas de Código:** ~1200+  
+**Tempo de Desenvolvimento:** ~4 horas  
+**Linhas de Código:** ~1500+  
 **Status Final:** ✅ PRODUCTION READY
