@@ -1,6 +1,7 @@
 import { PrismaClient, EquipmentSlot, Inventory, Item } from '@prisma/client';
 import { GiveItemDTO, EquipItemDTO } from './inventory.types';
 import { questService } from '../quest/quest.service';
+import { logger } from '../../config/logger';
 
 const prisma = new PrismaClient();
 
@@ -37,8 +38,11 @@ export class InventoryService {
   async equipItem(characterId: number, data: EquipItemDTO): Promise<void> {
     const { inventoryId, slot } = data;
 
+    logger.info(`Equipping item: characterId=${characterId}, inventoryId=${inventoryId}, slot=${slot}`);
+
     // Validate slot
     if (!Object.values(EquipmentSlot).includes(slot as EquipmentSlot)) {
+      logger.error(`Invalid slot: ${slot}`);
       throw new Error('Slot inválido');
     }
 
@@ -52,11 +56,15 @@ export class InventoryService {
     });
 
     if (!inventoryItem) {
+      logger.error(`Item not found: inventoryId=${inventoryId}, characterId=${characterId}`);
       throw new Error('Item não encontrado no inventário');
     }
 
+    logger.info(`Found item: ${inventoryItem.item.name}, slot=${inventoryItem.item.slot}, requiredSlot=${slot}`);
+
     // Check if item can be equipped in this slot
     if (inventoryItem.item.slot !== slot) {
+      logger.error(`Slot mismatch: item.slot=${inventoryItem.item.slot}, requiredSlot=${slot}`);
       throw new Error(`Este item não pode ser equipado no slot ${slot}`);
     }
 
@@ -224,7 +232,7 @@ export class InventoryService {
 
     for (const equip of equipment) {
       if (equip.inventory?.item.attributes) {
-        const attrs = JSON.parse(equip.inventory.item.attributes as string);
+        const attrs = equip.inventory.item.attributes as any;
         totalStr += attrs.str || 0;
         totalAgi += attrs.agi || 0;
         totalVit += attrs.vit || 0;

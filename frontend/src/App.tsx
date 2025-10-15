@@ -7,6 +7,7 @@ import { Dashboard } from './pages/Dashboard';
 import { Inventory } from './pages/Inventory';
 import { Battle } from './pages/Battle';
 import { Quests } from './pages/Quests';
+import { Crafting } from './pages/Crafting';
 import { PrivateRoute } from './components/PrivateRoute';
 
 function App() {
@@ -67,6 +68,15 @@ function App() {
           element={
             <PrivateRoute>
               <Quests />
+            </PrivateRoute>
+          }
+        />
+        
+        <Route
+          path="/crafting"
+          element={
+            <PrivateRoute>
+              <Crafting />
             </PrivateRoute>
           }
         />

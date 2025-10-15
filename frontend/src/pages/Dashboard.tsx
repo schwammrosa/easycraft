@@ -162,12 +162,18 @@ export function Dashboard() {
                   🎯 Missões
                 </button>
                 <button
+                  onClick={() => navigate('/crafting')}
+                  className="w-full py-2 bg-accent-purple hover:bg-opacity-80 rounded-lg transition-colors"
+                >
+                  🔨 Crafting
+                </button>
+                <button
                   onClick={() => navigate('/inventory')}
                   className="w-full py-2 bg-accent-green hover:bg-opacity-80 rounded-lg transition-colors"
                 >
                   🎒 Inventário
                 </button>
-                <button className="w-full py-2 bg-accent-purple rounded-lg opacity-50 cursor-not-allowed">
+                <button className="w-full py-2 bg-bg-panel rounded-lg opacity-50 cursor-not-allowed">
                   🏪 Mercado (Em breve)
                 </button>
               </div>

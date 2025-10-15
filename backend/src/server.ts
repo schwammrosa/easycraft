@@ -10,7 +10,10 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(helmet());
-app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173' }));
+app.use(cors({ 
+  origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5173', 'http://localhost:5174'],
+  credentials: true 
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -30,6 +33,7 @@ import inventoryRoutes from './modules/inventory/inventory.routes';
 import itemRoutes from './modules/item/item.routes';
 import battleRoutes from './modules/battle/battle.routes';
 import questRoutes from './modules/quest/quest.routes';
+import craftingRoutes from './modules/crafting/crafting.routes';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/characters', characterRoutes);
@@ -37,6 +41,7 @@ app.use('/api/inventory', inventoryRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/battle', battleRoutes);
 app.use('/api/quest', questRoutes);
+app.use('/api/crafting', craftingRoutes);
 
 // Error handling
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

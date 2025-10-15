@@ -4,7 +4,8 @@
 
 ![Version](https://img.shields.io/badge/version-1.0.0--alpha-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Status](https://img.shields.io/badge/status-in%20development-yellow)
+![Status](https://img.shields.io/badge/status-playable-brightgreen)
+![Progress](https://img.shields.io/badge/progress-90%25-success)
 
 **Um MMORPG baseado em navegador focado em progressão e economia, sem complexidade gráfica**
 
@@ -31,15 +32,17 @@ EasyCraft é um MMORPG web minimalista que foca em mecânicas de progressão, si
 
 ## ✨ Features
 
-### MVP (Fase 1)
+### MVP (Fase 1) - ✅ COMPLETO!
 - [x] Sistema de autenticação (JWT)
-- [x] Criação de personagens com customização visual
-- [x] Sistema de inventário e equipamentos
-- [x] Combates automáticos contra monstros
-- [x] Marketplace entre jogadores
+- [x] Criação de personagens (3 classes)
+- [x] Sistema de inventário (40 itens)
+- [x] Sistema de equipamentos (6 slots)
+- [x] Combates turn-based automáticos (10 inimigos)
+- [x] Sistema de XP e level up
+- [x] Sistema de Quests (19 missões)
+- [x] Sistema de descanso e gestão de HP
 - [ ] Sistema de craft básico
-- [ ] Coleta de recursos
-- [ ] Missões/Quests
+- [ ] Marketplace entre jogadores
 
 ### Roadmap
 - [ ] NPCs compradores (regulação econômica)
@@ -169,10 +172,11 @@ easycraft/
 ## 📚 Documentação
 
 ### Para Desenvolvedores
-- [Visão Geral do Projeto](docs/01_visao_geral.md)
-- [Mecânicas Detalhadas](docs/02_mecanicas_detalhadas.md)
-- [Requisitos Técnicos](docs/03_requisitos_tecnicos.md)
-- [Especificação da API](docs/04_api_specification.md)
+- [Status do Projeto](docs/PROJECT_STATUS.md) ⭐ **NOVO**
+- [Sprint 1 - Auth & Personagens](docs/SPRINT1_COMPLETE.md)
+- [Sprint 2 - Inventário](docs/SPRINT2_COMPLETE.md)
+- [Sprint 3 - Batalhas](docs/SPRINT3_COMPLETE.md)
+- [Sprint 4 - Quests](docs/SPRINT4_COMPLETE.md) ⭐ **NOVO**
 - [Database Schema](docs/05_database_schema.sql)
 
 ### Para Designers

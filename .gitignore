@@ -11,10 +11,7 @@ coverage/
 build/
 dist/
 
-# Environment
-.env
-.env.local
-.env.production
+
 
 # IDEs
 .vscode/

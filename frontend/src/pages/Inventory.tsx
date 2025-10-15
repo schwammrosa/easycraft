@@ -20,6 +20,7 @@ export function Inventory() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
+  const [equipping, setEquipping] = useState(false);
 
   useEffect(() => {
     if (!selectedCharacter) {
@@ -49,15 +50,32 @@ export function Inventory() {
   };
 
   const handleEquip = async (item: InventoryItem) => {
-    if (!selectedCharacter || !item.item.slot) return;
+    if (equipping) return; // Prevent double-click
+    
+    if (!selectedCharacter || !item.item.slot) {
+      console.warn('Cannot equip:', { hasCharacter: !!selectedCharacter, slot: item.item.slot, item: item.item });
+      setError('Este item não pode ser equipado');
+      return;
+    }
 
+    setEquipping(true);
     try {
+      console.log('Equiping item:', { itemId: item.id, slot: item.item.slot, itemName: item.item.name });
       await inventoryService.equipItem(selectedCharacter.id, item.id, item.item.slot);
       await loadData();
       setSelectedItem(null);
       setError('');
     } catch (err: any) {
-      setError(err.response?.data?.error?.message || 'Erro ao equipar item');
+      const errorData = err.response?.data;
+      const errorMessage = errorData?.error?.message || 'Erro ao equipar item';
+      console.error('Equip error FULL:', {
+        status: err.response?.status,
+        data: errorData,
+        message: errorMessage,
+      });
+      setError(errorMessage);
+    } finally {
+      setEquipping(false);
     }
   };
 
@@ -142,7 +160,7 @@ export function Inventory() {
                           </p>
                           {equipped.inventory.item.attributes && (
                             <div className="mt-2 flex gap-2 flex-wrap">
-                              {Object.entries(JSON.parse(equipped.inventory.item.attributes as string)).map(
+                              {Object.entries(equipped.inventory.item.attributes as Record<string, any>).map(
                                 ([key, value]) => (
                                   <span
                                     key={key}
@@ -219,9 +237,14 @@ export function Inventory() {
                             e.stopPropagation();
                             handleEquip(item);
                           }}
-                          className="w-full mt-2 py-1 bg-accent-blue hover:bg-opacity-80 rounded text-xs"
+                          disabled={equipping}
+                          className={`w-full mt-2 py-1 rounded text-xs ${
+                            equipping 
+                              ? 'bg-gray-600 cursor-not-allowed opacity-50' 
+                              : 'bg-accent-blue hover:bg-opacity-80'
+                          }`}
                         >
-                          Equipar
+                          {equipping ? 'Equipando...' : 'Equipar'}
                         </button>
                       )}
                     </div>
@@ -271,11 +294,11 @@ export function Inventory() {
                 </div>
               </div>
               
-              {selectedItem.item.attributes && Object.keys(JSON.parse(selectedItem.item.attributes as string)).length > 0 && (
+              {selectedItem.item.attributes && Object.keys(selectedItem.item.attributes as Record<string, any>).length > 0 && (
                 <div className="mb-4">
                   <h4 className="font-semibold mb-2">Atributos:</h4>
                   <div className="flex gap-2 flex-wrap">
-                    {Object.entries(JSON.parse(selectedItem.item.attributes as string)).map(
+                    {Object.entries(selectedItem.item.attributes as Record<string, any>).map(
                       ([key, value]) => (
                         <span
                           key={key}

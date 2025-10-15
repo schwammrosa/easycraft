@@ -284,6 +284,39 @@ model CharacterQuest {
 }
 
 // =====================================================
+// CRAFTING SYSTEM
+// =====================================================
+
+enum CraftingCategory {
+  weapon
+  armor
+  consumable
+  material
+  enhancement
+}
+
+model CraftingRecipe {
+  id              Int               @id @default(autoincrement())
+  code            String            @unique
+  name            String
+  description     String?
+  category        CraftingCategory
+  resultItemCode  String            @map("result_item_code")
+  resultQuantity  Int               @default(1) @map("result_quantity")
+  ingredients     Json              // [{ itemCode: string, quantity: number }]
+  requiredLevel   Int               @default(1) @map("required_level")
+  craftTime       Int               @default(0) @map("craft_time") // seconds
+  goldCost        Int               @default(0) @map("gold_cost")
+  xpReward        Int               @default(0) @map("xp_reward")
+  successRate     Float             @default(1.0) @map("success_rate") // 0.0 to 1.0
+  createdAt       DateTime          @default(now()) @map("created_at")
+  
+  @@map("crafting_recipes")
+  @@index([category])
+  @@index([requiredLevel])
+}
+
+// =====================================================
 // GAME CONFIGURATION
 // =====================================================
 
