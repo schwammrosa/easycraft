@@ -11,11 +11,13 @@ import { Crafting } from './pages/Crafting';
 import { Marketplace } from './pages/Marketplace';
 import { Dungeons } from './pages/Dungeons';
 import { PrivateRoute } from './components/PrivateRoute';
+import { ToastProvider } from './components/ToastProvider';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <ToastProvider>
+      <BrowserRouter>
+        <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -100,8 +102,9 @@ function App() {
             </PrivateRoute>
           }
         />
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </ToastProvider>
   );
 }
 

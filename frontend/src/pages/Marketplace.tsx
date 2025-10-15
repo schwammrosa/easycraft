@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCharacterStore } from '../store/characterStore';
-import { marketplaceService, MarketplaceListing, MarketplaceFilters } from '../services/marketplace.service';
+import { marketplaceService, MarketplaceListing, MarketplaceFilters, MarketplaceTransaction } from '../services/marketplace.service';
 import { inventoryService, InventoryItem } from '../services/inventory.service';
 import { characterService } from '../services/character.service';
 
@@ -9,9 +9,14 @@ export function Marketplace() {
   const navigate = useNavigate();
   const { selectedCharacter, selectCharacter } = useCharacterStore();
   
-  const [activeTab, setActiveTab] = useState<'browse' | 'my'>('browse');
+  const [activeTab, setActiveTab] = useState<'browse' | 'my' | 'history'>('browse');
   const [listings, setListings] = useState<MarketplaceListing[]>([]);
   const [myListings, setMyListings] = useState<MarketplaceListing[]>([]);
+  const [historyTransactions, setHistoryTransactions] = useState<MarketplaceTransaction[]>([]);
+  const [historyType, setHistoryType] = useState<'purchases' | 'sales'>('purchases');
+  const [historyPage, setHistoryPage] = useState(1);
+  const [historyTotalPages, setHistoryTotalPages] = useState(1);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -51,6 +56,12 @@ export function Marketplace() {
     }
   }, [activeTab, selectedCharacter]);
 
+  useEffect(() => {
+    if (activeTab === 'history' && selectedCharacter) {
+      loadHistory();
+    }
+  }, [activeTab, selectedCharacter, historyType, historyPage]);
+
   const loadListings = async () => {
     if (!selectedCharacter) return;
     
@@ -83,6 +94,27 @@ export function Marketplace() {
       setMyListings(myListingsData);
     } catch (err: any) {
       setError('Erro ao carregar seus anúncios');
+    }
+  };
+
+  const loadHistory = async () => {
+    if (!selectedCharacter) return;
+    
+    setHistoryLoading(true);
+    try {
+      const historyData = await marketplaceService.getHistory(
+        selectedCharacter.id,
+        historyType,
+        historyPage,
+        15
+      );
+      setHistoryTransactions(historyData.transactions);
+      setHistoryTotalPages(historyData.totalPages);
+      setError('');
+    } catch (err: any) {
+      setError('Erro ao carregar histórico');
+    } finally {
+      setHistoryLoading(false);
     }
   };
 
@@ -260,6 +292,16 @@ export function Marketplace() {
           >
             📦 Meus Anúncios
           </button>
+          <button
+            onClick={() => setActiveTab('history')}
+            className={`px-6 py-3 rounded-lg font-semibold transition ${
+              activeTab === 'history'
+                ? 'bg-accent-gold text-bg-dark'
+                : 'bg-bg-panel text-text-secondary hover:bg-primary-medium'
+            }`}
+          >
+            📜 Histórico
+          </button>
         </div>
 
         {/* Browse Tab */}
@@ -404,6 +446,134 @@ export function Marketplace() {
                 )}
               </>
             )}
+          </div>
+        )}
+
+        {/* History Tab */}
+        {activeTab === 'history' && (
+          <div>
+            {/* History Type Filter */}
+            <div className="bg-bg-panel rounded-lg p-6 mb-6">
+              <div className="flex gap-4 mb-4">
+                <button
+                  onClick={() => {
+                    setHistoryType('purchases');
+                    setHistoryPage(1);
+                  }}
+                  className={`px-6 py-2 rounded-lg font-semibold transition ${
+                    historyType === 'purchases'
+                      ? 'bg-accent-blue text-white'
+                      : 'bg-bg-input text-text-secondary hover:bg-primary-medium'
+                  }`}
+                >
+                  💰 Compras
+                </button>
+                <button
+                  onClick={() => {
+                    setHistoryType('sales');
+                    setHistoryPage(1);
+                  }}
+                  className={`px-6 py-2 rounded-lg font-semibold transition ${
+                    historyType === 'sales'
+                      ? 'bg-accent-green text-white'
+                      : 'bg-bg-input text-text-secondary hover:bg-primary-medium'
+                  }`}
+                >
+                  💵 Vendas
+                </button>
+              </div>
+
+              {historyLoading ? (
+                <div className="text-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-gold mx-auto mb-4"></div>
+                  <p className="text-text-secondary">Carregando histórico...</p>
+                </div>
+              ) : historyTransactions.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-text-secondary">
+                    {historyType === 'purchases' 
+                      ? 'Você ainda não comprou nenhum item'
+                      : 'Você ainda não vendeu nenhum item'}
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-3">
+                    {historyTransactions.map((transaction) => (
+                      <div
+                        key={transaction.id}
+                        className="bg-bg-input rounded-lg p-4 border border-primary-medium"
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <h3 className="font-bold text-lg mb-2">
+                              {transaction.item.name}
+                              <span className="ml-2 text-sm text-accent-blue">x{transaction.quantity}</span>
+                            </h3>
+                            
+                            <div className="grid grid-cols-2 gap-2 text-sm mb-2">
+                              <div>
+                                <span className="text-text-secondary">Preço unitário: </span>
+                                <span className="font-semibold text-accent-gold">{transaction.pricePerUnit}g</span>
+                              </div>
+                              <div>
+                                <span className="text-text-secondary">Total: </span>
+                                <span className="font-bold text-accent-gold">{transaction.totalPrice}g</span>
+                              </div>
+                              <div>
+                                <span className="text-text-secondary">
+                                  {historyType === 'purchases' ? 'Vendedor: ' : 'Comprador: '}
+                                </span>
+                                <span className="font-semibold">
+                                  {historyType === 'purchases' 
+                                    ? transaction.seller.name 
+                                    : transaction.buyer.name}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-text-secondary">Data: </span>
+                                <span className="text-sm">
+                                  {new Date(transaction.createdAt).toLocaleDateString('pt-BR')}
+                                </span>
+                              </div>
+                            </div>
+
+                            {transaction.commission > 0 && historyType === 'sales' && (
+                              <p className="text-xs text-text-secondary">
+                                Comissão descontada: {transaction.commission}g
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* History Pagination */}
+                  {historyTotalPages > 1 && (
+                    <div className="flex justify-center gap-2 mt-6">
+                      <button
+                        onClick={() => setHistoryPage(p => Math.max(1, p - 1))}
+                        disabled={historyPage === 1}
+                        className="px-4 py-2 bg-bg-input rounded-lg disabled:opacity-50 hover:bg-primary-medium"
+                      >
+                        ← Anterior
+                      </button>
+                      <span className="px-4 py-2 bg-bg-input rounded-lg">
+                        Página {historyPage} de {historyTotalPages}
+                      </span>
+                      <button
+                        onClick={() => setHistoryPage(p => Math.min(historyTotalPages, p + 1))}
+                        disabled={historyPage === historyTotalPages}
+                        className="px-4 py-2 bg-bg-input rounded-lg disabled:opacity-50 hover:bg-primary-medium"
+                      >
+                        Próxima →
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         )}
 
