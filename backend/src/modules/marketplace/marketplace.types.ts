@@ -1,4 +1,4 @@
-import { MarketplaceListing, Item, Character, MarketplaceStatus } from '@prisma/client';
+import { MarketplaceListing, Item } from '@prisma/client';
 
 export interface MarketplaceListingWithDetails extends MarketplaceListing {
   item: Item;
