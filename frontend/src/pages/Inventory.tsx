@@ -226,7 +226,7 @@ export function Inventory() {
                   title="Inventário Vazio"
                   description="Derrote monstros para conseguir itens!"
                   action={{
-                    label: "Ir para Batalha",
+                    label: "Ir para Farm Mode",
                     onClick: () => navigate('/battle'),
                     icon: <Sword className="w-5 h-5" />
                   }}

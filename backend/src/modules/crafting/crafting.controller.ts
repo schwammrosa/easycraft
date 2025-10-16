@@ -73,6 +73,8 @@ export class CraftingController {
         return;
       }
 
+      logger.info(`Crafting request - CharacterId: ${characterId}, Body:`, req.body);
+
       const result = await craftingService.craftItem(characterId, req.body);
 
       logger.info(`Character ${characterId} crafted item: ${result.success ? 'SUCCESS' : 'FAIL'}`);
@@ -83,6 +85,12 @@ export class CraftingController {
       });
     } catch (error) {
       logger.error('Craft item error:', error);
+      logger.error('Error details:', {
+        characterId: req.params.characterId,
+        body: req.body,
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined
+      });
 
       if (error instanceof Error) {
         res.status(400).json({

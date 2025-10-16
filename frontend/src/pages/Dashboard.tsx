@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Swords, Target, Hammer, TreePine, Backpack, Store, Castle } from 'lucide-react';
+import { Flame, Target, Hammer, TreePine, Backpack, Store, Castle } from 'lucide-react';
 import { useCharacterStore } from '../store/characterStore';
 import { characterService } from '../services/character.service';
 import { LoadingSpinner } from '../components/LoadingSpinner';
@@ -58,7 +58,7 @@ export function Dashboard() {
   }
 
   const quickActions = [
-    { icon: <Swords className="w-5 h-5" />, label: 'Batalha', path: '/battle', variant: 'danger', tooltip: 'Enfrente inimigos e ganhe XP!' },
+    { icon: <Flame className="w-5 h-5" />, label: 'Farm Mode', path: '/battle', variant: 'danger', tooltip: 'Batalha automática contra monstros!' },
     { icon: <Target className="w-5 h-5" />, label: 'Missões', path: '/quests', variant: 'info', tooltip: 'Complete missões por recompensas' },
     { icon: <Hammer className="w-5 h-5" />, label: 'Crafting', path: '/crafting', variant: 'purple', tooltip: 'Crie itens poderosos' },
     { icon: <TreePine className="w-5 h-5" />, label: 'Coleta', path: '/gathering', variant: 'success', tooltip: 'Colete recursos para crafting' },

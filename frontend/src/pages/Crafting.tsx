@@ -37,6 +37,7 @@ export function Crafting() {
       setRecipes(recipesData);
       setInventory(inventoryData);
     } catch (err: any) {
+      console.error('❌ Error loading data:', err);
       setError('Erro ao carregar dados');
     } finally {
       setLoading(false);
@@ -61,8 +62,7 @@ export function Crafting() {
       selectCharacter(updatedChar);
       setInventory(inventoryData);
     } catch (err: any) {
-      const errorMessage = err.response?.data?.error?.message || 'Erro ao craftar item';
-      console.error('Crafting error:', err.response?.data);
+      const errorMessage = err.response?.data?.error?.message || err.message || 'Erro ao craftar item';
       setError(errorMessage);
     } finally {
       setCrafting(false);
@@ -80,7 +80,8 @@ export function Crafting() {
     if (Number(selectedCharacter.gold) < recipe.goldCost) return false;
 
     for (const ingredient of recipe.ingredients) {
-      if (getItemQuantity(ingredient.itemCode) < ingredient.quantity) {
+      const available = getItemQuantity(ingredient.itemCode);
+      if (available < ingredient.quantity) {
         return false;
       }
     }

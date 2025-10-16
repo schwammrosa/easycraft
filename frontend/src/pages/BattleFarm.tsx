@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Swords } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { battleService, Enemy, FarmModeConfig } from '../services/battle.service';
 import { useCharacterStore } from '../store/characterStore';
 import { characterService } from '../services/character.service';
@@ -255,24 +255,15 @@ export function BattleFarm() {
       title="🔥 Farm Mode"
       showBack={true}
       actions={
-        <div className="flex gap-2">
-          {selectedCharacter.hp < selectedCharacter.maxHp && (
-            <Button
-              variant="success"
-              onClick={handleRest}
-              icon={<Heart className="w-4 h-4" />}
-            >
-              Descansar
-            </Button>
-          )}
+        selectedCharacter.hp < selectedCharacter.maxHp && (
           <Button
-            variant="danger"
-            onClick={() => navigate('/battle')}
-            icon={<Swords className="w-4 h-4" />}
+            variant="success"
+            onClick={handleRest}
+            icon={<Heart className="w-4 h-4" />}
           >
-            Batalha
+            Descansar
           </Button>
-        </div>
+        )
       }
     >
       <div className="space-y-6">

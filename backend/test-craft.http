@@ -1,0 +1,21 @@
+### Login primeiro
+POST http://localhost:3001/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "test",
+  "password": "test123"
+}
+
+### Listar receitas do personagem
+GET http://localhost:3001/api/crafting/1/recipes
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Craftar item
+POST http://localhost:3001/api/crafting/1/craft
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "recipeCode": "craft_sword_iron"
+}
