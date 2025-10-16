@@ -509,6 +509,133 @@ async function main() {
   });
 
   console.log(`✅ Created ${items.count} items`);
+
+  // Clear and seed monsters
+  await prisma.enemy.deleteMany({});
+  const enemies = await prisma.enemy.createMany({
+    data: [
+      { code: 'slime', name: 'Slime', level: 1, hp: 20, attack: 3, defense: 1, experience: 10, goldDrop: 5 },
+      { code: 'goblin', name: 'Goblin', level: 3, hp: 40, attack: 8, defense: 3, experience: 25, goldDrop: 15 },
+      { code: 'wolf', name: 'Lobo', level: 5, hp: 60, attack: 12, defense: 5, experience: 40, goldDrop: 25 },
+      { code: 'orc', name: 'Orc', level: 7, hp: 90, attack: 18, defense: 8, experience: 60, goldDrop: 40 },
+      { code: 'troll', name: 'Troll', level: 10, hp: 150, attack: 25, defense: 12, experience: 100, goldDrop: 75 },
+      { code: 'dark_knight', name: 'Cavaleiro Sombrio', level: 15, hp: 250, attack: 40, defense: 20, experience: 200, goldDrop: 150 },
+      { code: 'dragon', name: 'Dragão', level: 20, hp: 500, attack: 60, defense: 30, experience: 500, goldDrop: 300 },
+    ],
+  });
+  console.log(`✅ Created ${enemies.count} enemies`);
+
+  // Clear and seed dungeons
+  await prisma.dungeon.deleteMany({});
+  const dungeons = await prisma.dungeon.createMany({
+    data: [
+      {
+        code: 'goblin_cave',
+        name: 'Caverna dos Goblins',
+        description: 'Uma caverna infestada de goblins',
+        minLevel: 1,
+        maxLevel: 5,
+        floors: 3,
+        baseReward: 100,
+      },
+      {
+        code: 'dark_forest',
+        name: 'Floresta Sombria',
+        description: 'Uma floresta cheia de criaturas perigosas',
+        minLevel: 5,
+        maxLevel: 10,
+        floors: 5,
+        baseReward: 250,
+      },
+      {
+        code: 'ancient_ruins',
+        name: 'Ruínas Antigas',
+        description: 'Ruínas de uma civilização perdida',
+        minLevel: 10,
+        maxLevel: 15,
+        floors: 7,
+        baseReward: 500,
+      },
+    ],
+  });
+  console.log(`✅ Created ${dungeons.count} dungeons`);
+
+  // Clear and seed quests
+  await prisma.quest.deleteMany({});
+  const quests = await prisma.quest.createMany({
+    data: [
+      {
+        code: 'tutorial_combat',
+        name: 'Primeiro Combate',
+        description: 'Derrote 3 Slimes para ganhar experiência',
+        type: 'kill',
+        minLevel: 1,
+        maxLevel: 5,
+        objectives: JSON.stringify({ kill: { slime: 3 } }),
+        rewards: JSON.stringify({ experience: 50, gold: 25 }),
+        isRepeatable: false,
+      },
+      {
+        code: 'goblin_threat',
+        name: 'Ameaça Goblin',
+        description: 'Elimine 5 Goblins que ameaçam a vila',
+        type: 'kill',
+        minLevel: 3,
+        maxLevel: 10,
+        objectives: JSON.stringify({ kill: { goblin: 5 } }),
+        rewards: JSON.stringify({ experience: 150, gold: 75 }),
+        isRepeatable: true,
+      },
+      {
+        code: 'collect_herbs',
+        name: 'Coleta de Ervas',
+        description: 'Colete 10 ervas medicinais',
+        type: 'collect',
+        minLevel: 1,
+        maxLevel: 99,
+        objectives: JSON.stringify({ collect: { herb: 10 } }),
+        rewards: JSON.stringify({ experience: 75, gold: 50, items: ['potion_health'] }),
+        isRepeatable: true,
+      },
+    ],
+  });
+  console.log(`✅ Created ${quests.count} quests`);
+
+  // Clear and seed crafting recipes
+  await prisma.craftingRecipe.deleteMany({});
+  const recipes = await prisma.craftingRecipe.createMany({
+    data: [
+      {
+        code: 'craft_iron_sword',
+        name: 'Forjar Espada de Ferro',
+        resultItemCode: 'sword_iron',
+        resultQuantity: 1,
+        requiredItems: JSON.stringify({ iron_ore: 5, wood: 2 }),
+        minLevel: 5,
+        experience: 50,
+      },
+      {
+        code: 'craft_health_potion',
+        name: 'Preparar Poção de Vida',
+        resultItemCode: 'potion_health',
+        resultQuantity: 3,
+        requiredItems: JSON.stringify({ herb: 5, water: 1 }),
+        minLevel: 1,
+        experience: 20,
+      },
+      {
+        code: 'craft_leather_armor',
+        name: 'Criar Armadura de Couro',
+        resultItemCode: 'armor_leather',
+        resultQuantity: 1,
+        requiredItems: JSON.stringify({ leather: 8 }),
+        minLevel: 3,
+        experience: 40,
+      },
+    ],
+  });
+  console.log(`✅ Created ${recipes.count} crafting recipes`);
+
   console.log('🌱 Seed completed successfully!');
 }
 
