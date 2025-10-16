@@ -248,6 +248,14 @@ export function Dashboard() {
                     🔨 Crafting
                   </button>
                 </Tooltip>
+                <Tooltip content="Colete recursos para crafting">
+                  <button
+                    onClick={() => navigate('/gathering')}
+                    className="w-full py-2 bg-green-600 hover:bg-opacity-80 rounded-lg transition-all hover:scale-105"
+                  >
+                    🌲 Coleta
+                  </button>
+                </Tooltip>
                 <Tooltip content="Gerencie itens e equipamentos">
                   <button
                     onClick={() => navigate('/inventory')}

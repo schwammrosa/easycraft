@@ -7,7 +7,7 @@ export interface ClaimQuestDTO {
 }
 
 export interface QuestProgressUpdate {
-  type: 'kill_enemy' | 'complete_battle' | 'equip_item' | 'earn_gold';
+  type: 'kill_enemy' | 'complete_battle' | 'equip_item' | 'earn_gold' | 'collect_items';
   data?: {
     enemyCode?: string;
     amount?: number;

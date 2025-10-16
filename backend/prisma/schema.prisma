@@ -66,6 +66,7 @@ model Character {
   purchaseTransactions MarketplaceTransaction[] @relation("BuyerTransactions")
   dungeonRuns   DungeonRun[]
   farmSessions  FarmSession[]
+  gatherSessions GatherSession[]
   
   @@map("characters")
   @@index([userId])
@@ -537,6 +538,88 @@ model FarmSession {
   character             Character           @relation(fields: [characterId], references: [id], onDelete: Cascade)
   
   @@map("farm_sessions")
+  @@index([characterId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+// =====================================================
+// GATHERING SYSTEM (Resource Collection)
+// =====================================================
+
+enum GatherNodeType {
+  wood        // Madeira de árvores
+  ore         // Minérios
+  herb        // Ervas e plantas
+  crystal     // Cristais mágicos
+  leather     // Couro de caça
+}
+
+enum GatherSessionStatus {
+  running
+  completed
+  cancelled
+  error
+}
+
+model GatherNode {
+  id                Int             @id @default(autoincrement())
+  code              String          @unique
+  name              String
+  description       String?
+  type              GatherNodeType
+  requiredLevel     Int             @default(1) @map("required_level")
+  gatherTime        Int             @default(5) @map("gather_time") // seconds per gather
+  energyCost        Int             @default(10) @map("energy_cost") // energy per gather
+  xpReward          Int             @map("xp_reward")
+  
+  // Drop table: { itemCode: string, chance: number, quantity: [min, max] }
+  dropTable         Json            @default("{}") @map("drop_table")
+  
+  createdAt         DateTime        @default(now()) @map("created_at")
+  
+  @@map("gather_nodes")
+  @@index([type])
+  @@index([requiredLevel])
+}
+
+model GatherSession {
+  id                    Int                   @id @default(autoincrement())
+  characterId           Int                   @map("character_id")
+  nodeCode              String                @map("node_code")
+  nodeName              String                @map("node_name")
+  maxGathers            Int                   @map("max_gathers")
+  
+  // Status
+  status                GatherSessionStatus   @default(running)
+  
+  // Progress
+  currentGather         Int                   @default(0) @map("current_gather")
+  totalGathers          Int                   @default(0) @map("total_gathers")
+  successfulGathers     Int                   @default(0) @map("successful_gathers")
+  
+  // Rewards Accumulated
+  totalXpGained         Int                   @default(0) @map("total_xp_gained")
+  totalItemsGathered    Json                  @default("[]") @map("total_items_gathered")
+  levelsGained          Int                   @default(0) @map("levels_gained")
+  startLevel            Int                   @map("start_level")
+  endLevel              Int                   @map("end_level")
+  
+  // Energy tracking
+  energyUsed            Int                   @default(0) @map("energy_used")
+  
+  // Stop reason
+  stoppedReason         String?               @map("stopped_reason")
+  stoppedMessage        String?               @map("stopped_message")
+  
+  // Timestamps
+  startedAt             DateTime              @default(now()) @map("started_at")
+  lastGatherAt          DateTime?             @map("last_gather_at")
+  completedAt           DateTime?             @map("completed_at")
+  
+  character             Character             @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  
+  @@map("gather_sessions")
   @@index([characterId])
   @@index([status])
   @@index([startedAt])

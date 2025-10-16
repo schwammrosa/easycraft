@@ -58,6 +58,7 @@ import questRoutes from './modules/quest/quest.routes';
 import craftingRoutes from './modules/crafting/crafting.routes';
 import marketplaceRoutes from './modules/marketplace/marketplace.routes';
 import dungeonRoutes from './modules/dungeon/dungeon.routes';
+import gatheringRoutes from './modules/gathering/gathering.routes';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/characters', characterRoutes);
@@ -68,6 +69,7 @@ app.use('/api/quest', questRoutes);
 app.use('/api/crafting', craftingRoutes);
 app.use('/api/marketplace', marketplaceRoutes);
 app.use('/api/dungeons', dungeonRoutes);
+app.use('/api/gathering', gatheringRoutes);
 
 // Temporary seed route (REMOVE IN PRODUCTION!)
 app.post('/api/admin/seed', (_req, res) => {

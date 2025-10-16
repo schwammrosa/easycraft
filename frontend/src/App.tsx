@@ -11,6 +11,7 @@ import { Quests } from './pages/Quests';
 import { Crafting } from './pages/Crafting';
 import { Marketplace } from './pages/Marketplace';
 import { Dungeons } from './pages/Dungeons';
+import { Gathering } from './pages/Gathering';
 import { PrivateRoute } from './components/PrivateRoute';
 import { ToastProvider } from './components/ToastProvider';
 
@@ -109,6 +110,15 @@ function App() {
           element={
             <PrivateRoute>
               <Dungeons />
+            </PrivateRoute>
+          }
+        />
+        
+        <Route
+          path="/gathering"
+          element={
+            <PrivateRoute>
+              <Gathering />
             </PrivateRoute>
           }
         />
