@@ -47,6 +47,27 @@ app.use('/api/crafting', craftingRoutes);
 app.use('/api/marketplace', marketplaceRoutes);
 app.use('/api/dungeons', dungeonRoutes);
 
+// Temporary seed route (REMOVE IN PRODUCTION!)
+app.post('/api/admin/seed', async (_req, res) => {
+  try {
+    const { exec } = require('child_process');
+    exec('npx prisma db seed', { cwd: __dirname + '/../' }, (error: any, stdout: any, stderr: any) => {
+      if (error) {
+        logger.error(`Seed error: ${error.message}`);
+        return res.status(500).json({ success: false, error: error.message });
+      }
+      if (stderr) {
+        logger.error(`Seed stderr: ${stderr}`);
+      }
+      logger.info(`Seed stdout: ${stdout}`);
+      res.json({ success: true, message: 'Database seeded successfully!', output: stdout });
+    });
+  } catch (error: any) {
+    logger.error(error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Error handling
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   logger.error(err);
