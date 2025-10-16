@@ -26,10 +26,10 @@ export function Toast({ message, type, onClose, duration = 5000 }: ToastProps) {
   };
 
   const styles = {
-    success: 'bg-green-500/90 text-white',
-    error: 'bg-red-500/90 text-white',
-    warning: 'bg-yellow-500/90 text-white',
-    info: 'bg-blue-500/90 text-white',
+    success: 'bg-semantic-success/90 text-white shadow-lg',
+    error: 'bg-semantic-error/90 text-white shadow-lg',
+    warning: 'bg-semantic-warning/90 text-white shadow-lg',
+    info: 'bg-semantic-info/90 text-white shadow-lg',
   };
 
   return (

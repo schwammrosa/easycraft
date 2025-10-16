@@ -9,6 +9,8 @@ import {
   CooldownCheck 
 } from '../services/dungeon.service';
 import { characterService } from '../services/character.service';
+import { PageLayout } from '../components/layout/PageLayout';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 export function Dungeons() {
   const navigate = useNavigate();
@@ -181,20 +183,16 @@ export function Dungeons() {
   if (!selectedCharacter) return null;
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-bg-main flex items-center justify-center">
-        <div className="text-2xl text-text-primary">Carregando dungeons...</div>
-      </div>
-    );
+    return <LoadingSpinner fullscreen message="Carregando dungeons..." size="lg" />;
   }
 
   return (
-    <div className="min-h-screen bg-bg-main text-text-primary">
-      <div className="container mx-auto px-4 py-8">
+    <PageLayout title="🏰 Dungeons" showBack={true}>
+      <div className="space-y-6">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-accent-gold">🏰 Dungeons</h1>
+            <h2 className="text-2xl font-bold text-accent-gold">Dungeons Disponíveis</h2>
             <p className="text-text-secondary">
               {selectedCharacter.name} | Level {selectedCharacter.level} | HP: {selectedCharacter.hp}/{selectedCharacter.maxHp}
             </p>
@@ -578,6 +576,6 @@ export function Dungeons() {
           </div>
         )}
       </div>
-    </div>
+    </PageLayout>
   );
 }

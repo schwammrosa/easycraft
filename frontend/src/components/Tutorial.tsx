@@ -107,7 +107,7 @@ export function Tutorial({ steps, onComplete, onSkip }: TutorialProps) {
 
             <button
               onClick={handleNext}
-              className="flex items-center gap-2 px-6 py-2 bg-accent-gold text-bg-dark rounded-lg font-bold hover:bg-yellow-500 transition"
+              className="flex items-center gap-2 px-6 py-2 bg-accent-gold text-white rounded-lg font-bold hover:bg-yellow-500 transition"
             >
               {currentStep === steps.length - 1 ? 'Finalizar' : 'Próximo'}
               <ChevronRight className="w-4 h-4" />

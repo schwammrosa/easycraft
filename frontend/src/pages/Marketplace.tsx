@@ -4,6 +4,7 @@ import { useCharacterStore } from '../store/characterStore';
 import { marketplaceService, MarketplaceListing, MarketplaceFilters, MarketplaceTransaction } from '../services/marketplace.service';
 import { inventoryService, InventoryItem } from '../services/inventory.service';
 import { characterService } from '../services/character.service';
+import { PageLayout } from '../components/layout/PageLayout';
 
 export function Marketplace() {
   const navigate = useNavigate();
@@ -242,8 +243,8 @@ export function Marketplace() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-bg-main text-text-primary">
-      <div className="container mx-auto px-4 py-8">
+    <PageLayout title="🛒 Marketplace" showBack={true}>
+      <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -276,7 +277,7 @@ export function Marketplace() {
             onClick={() => setActiveTab('browse')}
             className={`px-6 py-3 rounded-lg font-semibold transition ${
               activeTab === 'browse'
-                ? 'bg-accent-gold text-bg-dark'
+                ? 'bg-accent-gold text-white'
                 : 'bg-bg-panel text-text-secondary hover:bg-primary-medium'
             }`}
           >
@@ -286,7 +287,7 @@ export function Marketplace() {
             onClick={() => setActiveTab('my')}
             className={`px-6 py-3 rounded-lg font-semibold transition ${
               activeTab === 'my'
-                ? 'bg-accent-gold text-bg-dark'
+                ? 'bg-accent-gold text-white'
                 : 'bg-bg-panel text-text-secondary hover:bg-primary-medium'
             }`}
           >
@@ -296,7 +297,7 @@ export function Marketplace() {
             onClick={() => setActiveTab('history')}
             className={`px-6 py-3 rounded-lg font-semibold transition ${
               activeTab === 'history'
-                ? 'bg-accent-gold text-bg-dark'
+                ? 'bg-accent-gold text-white'
                 : 'bg-bg-panel text-text-secondary hover:bg-primary-medium'
             }`}
           >
@@ -841,6 +842,6 @@ export function Marketplace() {
           </div>
         )}
       </div>
-    </div>
+    </PageLayout>
   );
 }

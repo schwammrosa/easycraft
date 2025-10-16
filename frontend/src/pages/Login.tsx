@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { LogIn } from 'lucide-react';
 import { authService } from '../services/auth.service';
 import { useAuthStore } from '../store/authStore';
+import { Card, CardBody } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
 
 export function Login() {
   const navigate = useNavigate();
@@ -29,15 +32,19 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-bg-main flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-bg-darker via-bg-main to-bg-dark flex items-center justify-center px-4">
       <div className="max-w-md w-full">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-accent-gold mb-2">🎮 EasyCraft</h1>
-          <p className="text-text-secondary">Entre na sua conta</p>
+        <div className="text-center mb-8 animate-fade-in">
+          <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-accent-gold to-accent-orange rounded-full flex items-center justify-center text-4xl shadow-glow-md">
+            🎮
+          </div>
+          <h1 className="text-5xl font-bold text-accent-gold mb-2">EasyCraft</h1>
+          <p className="text-text-secondary text-lg">Entre na sua conta</p>
         </div>
 
-        <div className="bg-bg-panel rounded-lg p-8 shadow-lg">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <Card variant="highlighted" className="animate-slide-in-bottom">
+          <CardBody>
+            <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium mb-2">
                 Email
@@ -69,27 +76,31 @@ export function Login() {
             </div>
 
             {error && (
-              <div className="bg-accent-red/10 border border-accent-red text-accent-red px-4 py-3 rounded-lg text-sm">
+              <div className="bg-semantic-error/10 border border-semantic-error text-semantic-error px-4 py-3 rounded-lg text-sm animate-shake">
                 {error}
               </div>
             )}
 
-            <button
+            <Button
               type="submit"
-              disabled={loading}
-              className="w-full bg-accent-blue hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed py-3 rounded-lg font-semibold transition-colors"
+              variant="primary"
+              size="lg"
+              fullWidth
+              isLoading={loading}
+              icon={<LogIn className="w-5 h-5" />}
             >
-              {loading ? 'Entrando...' : 'Entrar'}
-            </button>
-          </form>
+              Entrar
+            </Button>
+            </form>
 
-          <div className="mt-6 text-center text-sm">
-            <span className="text-text-secondary">Não tem uma conta? </span>
-            <Link to="/register" className="text-accent-blue hover:underline">
-              Registre-se
-            </Link>
-          </div>
-        </div>
+            <div className="mt-6 text-center text-sm">
+              <span className="text-text-secondary">Não tem uma conta? </span>
+              <Link to="/register" className="text-accent-blue hover:text-accent-blue-light font-semibold transition-colors">
+                Registre-se
+              </Link>
+            </div>
+          </CardBody>
+        </Card>
       </div>
     </div>
   );

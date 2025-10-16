@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserPlus, LogOut } from 'lucide-react';
 import { characterService } from '../services/character.service';
 import { useCharacterStore } from '../store/characterStore';
 import { useAuthStore } from '../store/authStore';
 import { authService } from '../services/auth.service';
+import { Card, CardBody } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
+import { Badge } from '../components/ui/Badge';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { EmptyState } from '../components/EmptyState';
 
 export function CharacterSelection() {
   const navigate = useNavigate();
@@ -47,119 +53,104 @@ export function CharacterSelection() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-bg-main flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-gold mx-auto mb-4"></div>
-          <p className="text-text-secondary">Carregando personagens...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner fullscreen message="Carregando personagens..." size="lg" />;
   }
 
   return (
-    <div className="min-h-screen bg-bg-main p-8">
+    <div className="min-h-screen bg-gradient-to-br from-bg-darker via-bg-main to-bg-dark p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-accent-gold mb-2">Seus Personagens</h1>
-            <p className="text-text-secondary">Escolha ou crie um novo personagem</p>
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+          <div className="text-center sm:text-left">
+            <h1 className="text-4xl font-bold text-accent-gold mb-2 animate-fade-in">Seus Personagens</h1>
+            <p className="text-text-secondary text-lg">Escolha ou crie um novo personagem</p>
           </div>
-          <button
+          <Button
+            variant="danger"
             onClick={handleLogout}
-            className="px-4 py-2 bg-primary-medium hover:bg-primary-light rounded-lg transition-colors"
+            icon={<LogOut className="w-4 h-4" />}
           >
             Sair
-          </button>
+          </Button>
         </div>
 
         {error && (
-          <div className="bg-accent-red/10 border border-accent-red text-accent-red px-4 py-3 rounded-lg mb-6">
+          <div className="bg-semantic-error/10 border border-semantic-error text-semantic-error px-4 py-3 rounded-lg mb-6 animate-shake">
             {error}
           </div>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {characters.map((character) => (
-            <div
+            <Card
               key={character.id}
               onClick={() => handleSelectCharacter(character)}
-              className="bg-bg-panel rounded-lg p-6 cursor-pointer hover:bg-opacity-80 transition-all hover:scale-105 border-2 border-transparent hover:border-accent-gold"
+              className="cursor-pointer hover:scale-105 transition-all duration-300 border-2 border-transparent hover:border-accent-gold animate-fade-in"
+              variant="default"
             >
-              <div className="text-center mb-4">
-                <div className="w-32 h-32 mx-auto bg-bg-input rounded-full mb-4 flex items-center justify-center text-6xl">
-                  🎮
+              <CardBody>
+                <div className="text-center mb-4">
+                  <div className="w-32 h-32 mx-auto bg-gradient-to-br from-accent-gold to-accent-orange rounded-full mb-4 flex items-center justify-center text-6xl shadow-glow-md">
+                    🎮
+                  </div>
+                  <h3 className="text-2xl font-bold text-accent-gold">{character.name}</h3>
+                  <Badge variant="gold" size="md" className="mt-2">Nível {character.level}</Badge>
                 </div>
-                <h3 className="text-xl font-bold text-accent-gold">{character.name}</h3>
-                <p className="text-text-secondary text-sm">Nível {character.level}</p>
-              </div>
 
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-text-secondary">HP:</span>
-                  <span className="text-accent-green">{character.hp}/{character.maxHp}</span>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="text-text-secondary">HP:</span>
+                    <Badge variant="success">{character.hp}/{character.maxHp}</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-text-secondary">Gold:</span>
+                    <Badge variant="gold">{character.gold}g</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-text-secondary">XP:</span>
+                    <Badge variant="info">{character.xp}</Badge>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-text-secondary">Gold:</span>
-                  <span className="text-accent-gold">{character.gold}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-text-secondary">XP:</span>
-                  <span className="text-accent-blue">{character.xp}</span>
-                </div>
-              </div>
 
-              <div className="mt-4 pt-4 border-t border-primary-medium">
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div>
-                    <span className="text-text-secondary">STR:</span>{' '}
-                    <span className="text-accent-red font-bold">{character.stats.totalStr}</span>
-                  </div>
-                  <div>
-                    <span className="text-text-secondary">AGI:</span>{' '}
-                    <span className="text-accent-green font-bold">{character.stats.totalAgi}</span>
-                  </div>
-                  <div>
-                    <span className="text-text-secondary">VIT:</span>{' '}
-                    <span className="text-accent-gold font-bold">{character.stats.totalVit}</span>
-                  </div>
-                  <div>
-                    <span className="text-text-secondary">INT:</span>{' '}
-                    <span className="text-accent-blue font-bold">{character.stats.totalInt}</span>
-                  </div>
-                  <div className="col-span-2">
-                    <span className="text-text-secondary">DEF:</span>{' '}
-                    <span className="text-accent-purple font-bold">{character.stats.totalDef}</span>
+                <div className="mt-4 pt-4 border-t border-primary-medium">
+                  <div className="grid grid-cols-2 gap-2">
+                    <Badge variant="error" size="sm">STR: {character.stats.totalStr}</Badge>
+                    <Badge variant="success" size="sm">AGI: {character.stats.totalAgi}</Badge>
+                    <Badge variant="gold" size="sm">VIT: {character.stats.totalVit}</Badge>
+                    <Badge variant="info" size="sm">INT: {character.stats.totalInt}</Badge>
+                    <Badge variant="purple" size="sm" className="col-span-2">DEF: {character.stats.totalDef}</Badge>
                   </div>
                 </div>
-              </div>
-            </div>
+              </CardBody>
+            </Card>
           ))}
 
           {characters.length < 3 && (
-            <div
+            <Card
               onClick={handleCreateNew}
-              className="bg-bg-panel rounded-lg p-6 cursor-pointer hover:bg-opacity-80 transition-all hover:scale-105 border-2 border-dashed border-primary-medium hover:border-accent-gold flex flex-col items-center justify-center min-h-[400px]"
+              className="cursor-pointer hover:scale-105 transition-all duration-300 border-2 border-dashed border-accent-gold hover:border-accent-gold-light hover:shadow-glow-sm min-h-[400px] animate-fade-in"
             >
-              <div className="text-6xl mb-4">➕</div>
-              <h3 className="text-xl font-bold text-accent-gold mb-2">Criar Personagem</h3>
-              <p className="text-text-secondary text-sm text-center">
-                Personagens: {characters.length}/3
-              </p>
-            </div>
+              <CardBody className="flex flex-col items-center justify-center h-full">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center mb-4 shadow-glow-md">
+                  <UserPlus className="w-12 h-12 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-accent-gold mb-2">Criar Personagem</h3>
+                <Badge variant="info" size="md">Personagens: {characters.length}/3</Badge>
+              </CardBody>
+            </Card>
           )}
         </div>
 
         {characters.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-text-secondary mb-4">Você ainda não tem personagens</p>
-            <button
-              onClick={handleCreateNew}
-              className="px-6 py-3 bg-accent-blue hover:bg-opacity-80 rounded-lg font-semibold transition-colors"
-            >
-              Criar Primeiro Personagem
-            </button>
-          </div>
+          <EmptyState
+            icon="🎮"
+            title="Nenhum Personagem"
+            description="Você ainda não tem personagens. Crie seu primeiro personagem para começar a jogar!"
+            action={{
+              label: "Criar Primeiro Personagem",
+              onClick: handleCreateNew,
+              icon: <UserPlus className="w-5 h-5" />
+            }}
+          />
         )}
       </div>
     </div>

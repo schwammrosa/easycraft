@@ -155,7 +155,7 @@ export function StatsDistribution({ character, onClose, onSuccess }: StatsDistri
             <button
               onClick={handleConfirm}
               disabled={loading || totalPending === 0}
-              className="flex-1 bg-accent-gold hover:bg-yellow-600 text-gray-900 font-bold py-3 px-6 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 bg-accent-gold hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Distribuindo...' : 'Confirmar Distribuição'}
             </button>

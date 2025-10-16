@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserPlus } from 'lucide-react';
 import { characterService } from '../services/character.service';
 import { useCharacterStore } from '../store/characterStore';
 import { VARIANT_OPTIONS } from '../types';
+import { PageLayout } from '../components/layout/PageLayout';
+import { Card, CardBody, CardHeader } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
 
 export function CharacterCreation() {
   const navigate = useNavigate();
@@ -50,20 +54,12 @@ export function CharacterCreation() {
   };
 
   return (
-    <div className="min-h-screen bg-bg-main p-8">
-      <div className="max-w-4xl mx-auto">
-        <button
-          onClick={() => navigate('/characters')}
-          className="text-accent-blue hover:underline mb-4"
-        >
-          ← Voltar
-        </button>
-
-        <h1 className="text-3xl font-bold text-accent-gold mb-8">Criar Personagem</h1>
-
+    <PageLayout title="✨ Criar Personagem" showBack={true}>
+      <div className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-bg-panel rounded-lg p-8">
-            <h2 className="text-xl font-bold mb-6 text-center">Preview</h2>
+          <Card className="animate-fade-in">
+            <CardHeader title="Preview" />
+            <CardBody>
             <div className="flex flex-col items-center space-y-4">
               <div className="w-48 h-48 bg-bg-input rounded-full flex items-center justify-center text-8xl">
                 🎮
@@ -71,9 +67,12 @@ export function CharacterCreation() {
               <p className="text-2xl font-bold text-accent-gold">{name || 'Seu Personagem'}</p>
               <p className="text-sm text-text-secondary">Head: {headVariant}</p>
             </div>
-          </div>
+            </CardBody>
+          </Card>
 
-          <div className="bg-bg-panel rounded-lg p-8">
+          <Card className="animate-fade-in">
+            <CardHeader title="Criação" />
+            <CardBody>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium mb-2">Nome</label>
@@ -115,17 +114,21 @@ export function CharacterCreation() {
                 </div>
               )}
 
-              <button
+              <Button
                 type="submit"
-                disabled={loading}
-                className="w-full bg-accent-blue hover:bg-opacity-80 disabled:opacity-50 py-3 rounded-lg font-semibold"
+                variant="primary"
+                size="lg"
+                fullWidth
+                isLoading={loading}
+                icon={<UserPlus className="w-5 h-5" />}
               >
-                {loading ? 'Criando...' : 'Criar Personagem'}
-              </button>
+                Criar Personagem
+              </Button>
             </form>
-          </div>
+            </CardBody>
+          </Card>
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 }

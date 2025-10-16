@@ -1,9 +1,16 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Heart, Swords } from 'lucide-react';
 import { battleService, Enemy, FarmModeConfig } from '../services/battle.service';
 import { useCharacterStore } from '../store/characterStore';
 import { characterService } from '../services/character.service';
 import { inventoryService } from '../services/inventory.service';
+import { PageLayout } from '../components/layout/PageLayout';
+import { Card, CardBody } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
+import { Badge } from '../components/ui/Badge';
+import { ProgressBar } from '../components/ui/ProgressBar';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 export function BattleFarm() {
   const navigate = useNavigate();
@@ -238,54 +245,63 @@ export function BattleFarm() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-bg-main flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-gold mx-auto mb-4"></div>
-          <p className="text-text-secondary">Carregando...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner fullscreen message="Carregando Farm Mode..." size="lg" />;
   }
 
   if (!selectedCharacter) return null;
 
   return (
-    <div className="min-h-screen bg-bg-main p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-accent-gold">🔥 Modo Farm Automático</h1>
-            <p className="text-text-secondary">
-              {selectedCharacter.name} - Level {selectedCharacter.level} - HP: {selectedCharacter.hp}/{selectedCharacter.maxHp}
-            </p>
-          </div>
-          <div className="space-x-4">
-            {selectedCharacter.hp < selectedCharacter.maxHp && (
-              <button
-                onClick={handleRest}
-                className="px-4 py-2 bg-accent-green hover:bg-opacity-80 rounded-lg"
-              >
-                💊 Descansar
-              </button>
-            )}
-            <button
-              onClick={() => navigate('/battle')}
-              className="px-4 py-2 bg-primary-medium hover:bg-primary-light rounded-lg"
+    <PageLayout 
+      title="🔥 Farm Mode"
+      showBack={true}
+      actions={
+        <div className="flex gap-2">
+          {selectedCharacter.hp < selectedCharacter.maxHp && (
+            <Button
+              variant="success"
+              onClick={handleRest}
+              icon={<Heart className="w-4 h-4" />}
             >
-              ⚔️ Batalha Normal
-            </button>
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="px-4 py-2 bg-primary-medium hover:bg-primary-light rounded-lg"
-            >
-              ← Voltar
-            </button>
-          </div>
+              Descansar
+            </Button>
+          )}
+          <Button
+            variant="danger"
+            onClick={() => navigate('/battle')}
+            icon={<Swords className="w-4 h-4" />}
+          >
+            Batalha
+          </Button>
         </div>
+      }
+    >
+      <div className="space-y-6">
+        {/* Character HP */}
+        <Card variant="highlighted" className="animate-fade-in">
+          <CardBody>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-xl font-bold text-accent-gold">{selectedCharacter.name}</h3>
+                <Badge variant="gold" size="md">Nível {selectedCharacter.level}</Badge>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-accent-green">
+                  {selectedCharacter.hp} / {selectedCharacter.maxHp}
+                </div>
+                <p className="text-sm text-text-secondary">HP Atual</p>
+              </div>
+            </div>
+            <ProgressBar
+              value={selectedCharacter.hp}
+              max={selectedCharacter.maxHp}
+              variant="health"
+              size="lg"
+            />
+          </CardBody>
+        </Card>
 
         {error && (
-          <div className="bg-accent-red/10 border border-accent-red text-accent-red px-4 py-3 rounded-lg mb-6">
+          <div className="bg-semantic-error/10 border border-semantic-error text-semantic-error px-4 py-3 rounded-lg animate-shake">
             {error}
           </div>
         )}
@@ -628,6 +644,6 @@ export function BattleFarm() {
           </div>
         )}
       </div>
-    </div>
+    </PageLayout>
   );
 }

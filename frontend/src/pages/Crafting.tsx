@@ -4,6 +4,8 @@ import { craftingService, CraftingRecipe, CraftResult } from '../services/crafti
 import { useCharacterStore } from '../store/characterStore';
 import { characterService } from '../services/character.service';
 import { inventoryService } from '../services/inventory.service';
+import { PageLayout } from '../components/layout/PageLayout';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 export function Crafting() {
   const navigate = useNavigate();
@@ -132,24 +134,17 @@ export function Crafting() {
   ];
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-bg-main flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-gold mx-auto mb-4"></div>
-          <p className="text-text-secondary">Carregando...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner fullscreen message="Carregando crafting..." size="lg" />;
   }
 
   if (!selectedCharacter) return null;
 
   return (
-    <div className="min-h-screen bg-bg-main p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+    <PageLayout title="🔨 Crafting" showBack={true}>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-accent-gold">🔨 Oficina de Crafting</h1>
+            <h2 className="text-2xl font-bold text-accent-gold">Receitas de Crafting</h2>
             <p className="text-text-secondary mt-1">
               Gold: <span className="text-accent-gold font-bold">{Number(selectedCharacter.gold)}</span>
             </p>
@@ -334,6 +329,6 @@ export function Crafting() {
           )}
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 }

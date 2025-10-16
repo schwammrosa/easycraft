@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { questService, Quest, CharacterQuest, QuestRewards } from '../services/quest.service';
 import { useCharacterStore } from '../store/characterStore';
 import { characterService } from '../services/character.service';
+import { PageLayout } from '../components/layout/PageLayout';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 export function Quests() {
   const navigate = useNavigate();
@@ -89,30 +91,14 @@ export function Quests() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-bg-main flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-gold mx-auto mb-4"></div>
-          <p className="text-text-secondary">Carregando...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner fullscreen message="Carregando missões..." size="lg" />;
   }
 
   if (!selectedCharacter) return null;
 
   return (
-    <div className="min-h-screen bg-bg-main p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-accent-gold">Missões</h1>
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="px-4 py-2 bg-primary-medium hover:bg-primary-light rounded-lg"
-          >
-            ← Voltar
-          </button>
-        </div>
+    <PageLayout title="🎯 Missões" showBack={true}>
+      <div className="space-y-6">
 
         {error && (
           <div className="bg-accent-red/10 border border-accent-red text-accent-red px-4 py-3 rounded-lg mb-6">
@@ -319,6 +305,6 @@ export function Quests() {
           </div>
         )}
       </div>
-    </div>
+    </PageLayout>
   );
 }

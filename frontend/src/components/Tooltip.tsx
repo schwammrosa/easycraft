@@ -93,8 +93,8 @@ export function StatTooltip({ stat, value, description }: StatTooltipProps) {
         </div>
       }
     >
-      <span className="cursor-help border-b border-dotted border-gray-500">
-        {stat}: {value}
+      <span className="cursor-help border-b border-dotted border-gray-400 text-text-primary font-semibold">
+        {stat}: <span className="text-accent-gold">{value}</span>
       </span>
     </Tooltip>
   );

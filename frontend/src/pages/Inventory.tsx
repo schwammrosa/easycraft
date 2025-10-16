@@ -1,8 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Sword } from 'lucide-react';
 import { inventoryService, InventoryItem, Equipment } from '../services/inventory.service';
 import { useCharacterStore } from '../store/characterStore';
 import { characterService } from '../services/character.service';
+import { PageLayout } from '../components/layout/PageLayout';
+import { Card, CardBody, CardHeader } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
+import { Badge } from '../components/ui/Badge';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { EmptyState } from '../components/EmptyState';
 
 const SLOT_NAMES: Record<string, string> = {
   weapon: '🗡️ Arma',
@@ -120,33 +127,14 @@ export function Inventory() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-bg-main flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-gold mx-auto mb-4"></div>
-          <p className="text-text-secondary">Carregando inventário...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner fullscreen message="Carregando inventário..." size="lg" />;
   }
 
   if (!selectedCharacter) return null;
 
   return (
-    <div className="min-h-screen bg-bg-main p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-accent-gold">Inventário</h1>
-            <p className="text-text-secondary">{selectedCharacter.name}</p>
-          </div>
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="px-4 py-2 bg-primary-medium hover:bg-primary-light rounded-lg"
-          >
-            ← Voltar
-          </button>
-        </div>
+    <PageLayout title="🎒 Inventário" showBack={true}>
+      <div className="space-y-6">
 
         {error && (
           <div className="bg-accent-red/10 border border-accent-red text-accent-red px-4 py-3 rounded-lg mb-6">
@@ -157,8 +145,9 @@ export function Inventory() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Equipment Panel */}
           <div className="lg:col-span-1">
-            <div className="bg-bg-panel rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-4">Equipamentos</h2>
+            <Card className="animate-fade-in">
+              <CardHeader title="Equipamentos" />
+              <CardBody>
               
               <div className="space-y-3">
                 {Object.entries(SLOT_NAMES).map(([slot, name]) => {
@@ -214,29 +203,34 @@ export function Inventory() {
               {/* Stats Display */}
               <div className="mt-6 pt-6 border-t border-primary-medium">
                 <h3 className="font-bold mb-3">Stats Totais</h3>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div>STR: <span className="text-accent-red">{selectedCharacter.stats.totalStr}</span></div>
-                  <div>AGI: <span className="text-accent-green">{selectedCharacter.stats.totalAgi}</span></div>
-                  <div>VIT: <span className="text-accent-gold">{selectedCharacter.stats.totalVit}</span></div>
-                  <div>INT: <span className="text-accent-blue">{selectedCharacter.stats.totalInt}</span></div>
-                  <div>DEF: <span className="text-accent-purple">{selectedCharacter.stats.totalDef}</span></div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Badge variant="error" size="sm">STR: {selectedCharacter.stats.totalStr}</Badge>
+                  <Badge variant="success" size="sm">AGI: {selectedCharacter.stats.totalAgi}</Badge>
+                  <Badge variant="gold" size="sm">VIT: {selectedCharacter.stats.totalVit}</Badge>
+                  <Badge variant="info" size="sm">INT: {selectedCharacter.stats.totalInt}</Badge>
+                  <Badge variant="purple" size="sm">DEF: {selectedCharacter.stats.totalDef}</Badge>
                 </div>
               </div>
-            </div>
+              </CardBody>
+            </Card>
           </div>
 
           {/* Inventory Grid */}
           <div className="lg:col-span-2">
-            <div className="bg-bg-panel rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-4">
-                Itens ({inventory.length} itens)
-              </h2>
-              
+            <Card className="animate-fade-in">
+              <CardHeader title={`Itens (${inventory.length})`} />
+              <CardBody>
               {inventory.length === 0 ? (
-                <div className="text-center py-12 text-text-secondary">
-                  <p className="mb-2">Seu inventário está vazio</p>
-                  <p className="text-sm">Derrote monstros para conseguir itens!</p>
-                </div>
+                <EmptyState
+                  icon="🎒"
+                  title="Inventário Vazio"
+                  description="Derrote monstros para conseguir itens!"
+                  action={{
+                    label: "Ir para Batalha",
+                    onClick: () => navigate('/battle'),
+                    icon: <Sword className="w-5 h-5" />
+                  }}
+                />
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {inventory.map((item) => (
@@ -260,43 +254,44 @@ export function Inventory() {
                       </div>
                       
                       {item.item.slot && (
-                        <button
+                        <Button
                           onClick={(e) => {
                             e.stopPropagation();
                             handleEquip(item);
                           }}
                           disabled={equipping}
-                          className={`w-full mt-2 py-1 rounded text-xs ${
-                            equipping 
-                              ? 'bg-gray-600 cursor-not-allowed opacity-50' 
-                              : 'bg-accent-blue hover:bg-opacity-80'
-                          }`}
+                          isLoading={equipping}
+                          variant="primary"
+                          size="sm"
+                          fullWidth
+                          className="mt-2"
                         >
-                          {equipping ? 'Equipando...' : 'Equipar'}
-                        </button>
+                          Equipar
+                        </Button>
                       )}
                       
                       {item.item.type === 'consumable' && (
-                        <button
+                        <Button
                           onClick={(e) => {
                             e.stopPropagation();
                             handleUseItem(item);
                           }}
                           disabled={using}
-                          className={`w-full mt-2 py-1 rounded text-xs ${
-                            using 
-                              ? 'bg-gray-600 cursor-not-allowed opacity-50' 
-                              : 'bg-accent-green hover:bg-opacity-80'
-                          }`}
+                          isLoading={using}
+                          variant="success"
+                          size="sm"
+                          fullWidth
+                          className="mt-2"
                         >
-                          {using ? 'Usando...' : 'Usar'}
-                        </button>
+                          Usar
+                        </Button>
                       )}
                     </div>
                   ))}
                 </div>
               )}
-            </div>
+              </CardBody>
+            </Card>
           </div>
         </div>
 
@@ -415,6 +410,6 @@ export function Inventory() {
           </div>
         )}
       </div>
-    </div>
+    </PageLayout>
   );
 }

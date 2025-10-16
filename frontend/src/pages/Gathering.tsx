@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gatheringService, GatherNode, GatherSession } from '../services/gathering.service';
 import { characterService } from '../services/character.service';
+import { PageLayout } from '../components/layout/PageLayout';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 export function Gathering() {
   const navigate = useNavigate();
@@ -140,14 +142,7 @@ export function Gathering() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin text-6xl mb-4">⚙️</div>
-          <p className="text-text-secondary">Carregando...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner fullscreen message="Carregando coleta..." size="lg" />;
   }
 
   if (error && !activeSession) {
@@ -168,30 +163,15 @@ export function Gathering() {
   }
 
   return (
-    <div className="min-h-screen bg-bg-primary p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-3xl font-bold flex items-center gap-3">
-              <span>🌲</span>
-              Coleta de Recursos
-            </h1>
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="px-4 py-2 bg-primary-medium hover:bg-primary-light rounded-lg"
-            >
-              ← Voltar
-            </button>
+    <PageLayout title="🌲 Coleta de Recursos" showBack={true}>
+      <div className="space-y-6">
+        {character && (
+          <div className="flex gap-4 text-sm text-text-secondary">
+            <span>⚔️ {character.name}</span>
+            <span>📊 Nível {character.level}</span>
+            <span>💰 {character.gold}g</span>
           </div>
-          {character && (
-            <div className="flex gap-4 text-sm text-text-secondary">
-              <span>⚔️ {character.name}</span>
-              <span>📊 Nível {character.level}</span>
-              <span>💰 {character.gold}g</span>
-            </div>
-          )}
-        </div>
+        )}
 
         {/* Active Session Modal */}
         {activeSession && (
@@ -512,6 +492,6 @@ export function Gathering() {
           </div>
         )}
       </div>
-    </div>
+    </PageLayout>
   );
 }
