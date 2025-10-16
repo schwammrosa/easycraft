@@ -156,7 +156,7 @@ export function Inventory() {
                   return (
                     <div key={slot} className="bg-bg-input rounded-lg p-4">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-sm font-medium">{name}</span>
+                        <span className="text-sm font-medium text-white">{name}</span>
                         {equipped?.inventory && (
                           <button
                             onClick={() => handleUnequip(slot)}
@@ -202,7 +202,7 @@ export function Inventory() {
 
               {/* Stats Display */}
               <div className="mt-6 pt-6 border-t border-primary-medium">
-                <h3 className="font-bold mb-3">Stats Totais</h3>
+                <h3 className="font-bold mb-3 text-white">Stats Totais</h3>
                 <div className="grid grid-cols-2 gap-2">
                   <Badge variant="error" size="sm">STR: {selectedCharacter.stats.totalStr}</Badge>
                   <Badge variant="success" size="sm">AGI: {selectedCharacter.stats.totalAgi}</Badge>

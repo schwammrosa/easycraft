@@ -3,6 +3,7 @@ import 'express-async-errors';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import path from 'path';
 import { logger } from './config/logger';
 
 const app = express();
@@ -38,6 +39,10 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files (images, sprites, etc.)
+app.use('/assets', express.static(path.join(__dirname, '../assets')));
+logger.info(`📂 Assets folder: ${path.join(__dirname, '../assets')}`);
 
 // Health check
 app.get('/api/health', (_req, res) => {

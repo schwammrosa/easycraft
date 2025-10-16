@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { CreateCharacterDTO, CharacterWithStats, CharacterResponse } from './character.types';
+import { CreateCharacterDTO, UpdateCharacterAppearanceDTO, CharacterWithStats, CharacterResponse } from './character.types';
 
 const prisma = new PrismaClient();
 
@@ -104,6 +104,37 @@ export class CharacterService {
     });
 
     return this.formatCharacterResponse(character);
+  }
+
+  async updateCharacterAppearance(
+    characterId: number,
+    userId: number,
+    data: UpdateCharacterAppearanceDTO
+  ): Promise<CharacterResponse> {
+    const character = await prisma.character.findFirst({
+      where: {
+        id: characterId,
+        userId,
+      },
+      include: { stats: true },
+    });
+
+    if (!character) {
+      throw new Error('Personagem não encontrado');
+    }
+
+    const updatedCharacter = await prisma.character.update({
+      where: { id: characterId },
+      data: {
+        headVariant: data.headVariant,
+        armsVariant: data.armsVariant,
+        legsVariant: data.legsVariant,
+        feetVariant: data.feetVariant,
+      },
+      include: { stats: true },
+    });
+
+    return this.formatCharacterResponse(updatedCharacter);
   }
 
   async deleteCharacter(characterId: number, userId: number): Promise<void> {

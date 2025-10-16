@@ -5,6 +5,7 @@ import { characterService } from '../services/character.service';
 import { useCharacterStore } from '../store/characterStore';
 import { useAuthStore } from '../store/authStore';
 import { authService } from '../services/auth.service';
+import { CharacterAvatar } from '../components/CharacterAvatar';
 import { Card, CardBody } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
@@ -89,8 +90,15 @@ export function CharacterSelection() {
             >
               <CardBody>
                 <div className="text-center mb-4">
-                  <div className="w-32 h-32 mx-auto bg-gradient-to-br from-accent-gold to-accent-orange rounded-full mb-4 flex items-center justify-center text-6xl shadow-glow-md">
-                    🎮
+                  <div className="mx-auto mb-4 flex justify-center">
+                    <CharacterAvatar
+                      headVariant={character.headVariant}
+                      armsVariant={character.armsVariant}
+                      legsVariant={character.legsVariant}
+                      feetVariant={character.feetVariant}
+                      size="md"
+                      showBorder={true}
+                    />
                   </div>
                   <h3 className="text-2xl font-bold text-accent-gold">{character.name}</h3>
                   <Badge variant="gold" size="md" className="mt-2">Nível {character.level}</Badge>

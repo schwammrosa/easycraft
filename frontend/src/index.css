@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 @layer base {
+  /* FORÇAR TODOS OS TEXTOS SEREM BRANCOS - GLOBAL */
+  * {
+    color: #ffffff;
+  }
+
   body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -10,11 +15,37 @@
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    color: #ffffff;
+    background-color: #1a1a2e;
+  }
+
+  /* Inputs e Selects */
+  input,
+  select,
+  textarea,
+  option {
+    color: #ffffff !important;
+  }
+
+  /* Options nos dropdowns */
+  select option {
+    background-color: #0f3460;
+    color: #ffffff;
+  }
+
+  /* Labels e spans */
+  label,
+  span,
+  p,
+  div,
+  h1, h2, h3, h4, h5, h6 {
+    color: inherit;
   }
 
   code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
       monospace;
+    color: #ffffff;
   }
 }
 

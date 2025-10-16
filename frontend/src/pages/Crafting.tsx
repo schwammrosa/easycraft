@@ -250,7 +250,7 @@ export function Crafting() {
 
                   {/* Result */}
                   <div className="bg-bg-main rounded-lg p-3 mb-4">
-                    <p className="text-xs text-text-secondary mb-1">Resultado:</p>
+                    <p className="text-xs text-white mb-1">Resultado:</p>
                     <p className="font-semibold text-accent-green">
                       {recipe.resultItemCode} x{recipe.resultQuantity}
                     </p>
@@ -258,7 +258,7 @@ export function Crafting() {
 
                   {/* Ingredients */}
                   <div className="mb-4">
-                    <p className="text-xs text-text-secondary mb-2">Materiais:</p>
+                    <p className="text-xs text-white mb-2">Materiais:</p>
                     <div className="space-y-1">
                       {recipe.ingredients.map((ing, i) => {
                         const available = getItemQuantity(ing.itemCode);
@@ -281,7 +281,7 @@ export function Crafting() {
                   {/* Cost & Rewards */}
                   <div className="border-t border-primary-medium pt-3 mb-4 space-y-1 text-sm">
                     <div className="flex justify-between">
-                      <span>Custo:</span>
+                      <span className="text-white">Custo:</span>
                       <span className={
                         Number(selectedCharacter.gold) >= recipe.goldCost
                           ? 'text-accent-gold'
@@ -295,7 +295,7 @@ export function Crafting() {
                       <span className="text-accent-blue">+{recipe.xpReward}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Taxa:</span>
+                      <span className="text-white">Taxa:</span>
                       <span className={recipe.successRate >= 0.95 ? 'text-accent-green' : 'text-accent-gold'}>
                         {(recipe.successRate * 100).toFixed(0)}%
                       </span>

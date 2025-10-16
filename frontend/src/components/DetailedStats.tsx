@@ -161,7 +161,7 @@ export function DetailedStats({ character, onClose }: DetailedStatsProps) {
                   <span className="text-2xl font-bold text-accent-green">{calculations.maxHP.result}</span>
                 </div>
                 <div className="text-xs text-text-secondary space-y-1">
-                  <div>Fórmula: {calculations.maxHP.formula}</div>
+                  <div className="text-white">Fórmula: {calculations.maxHP.formula}</div>
                   <div className="text-accent-green">= {calculations.maxHP.calculation}</div>
                 </div>
               </div>
@@ -173,7 +173,7 @@ export function DetailedStats({ character, onClose }: DetailedStatsProps) {
                   <span className="text-2xl font-bold text-accent-red">{calculations.baseDamage.result}</span>
                 </div>
                 <div className="text-xs text-text-secondary space-y-1">
-                  <div>Fórmula: {calculations.baseDamage.formula}</div>
+                  <div className="text-white">Fórmula: {calculations.baseDamage.formula}</div>
                   <div className="text-accent-red">= {calculations.baseDamage.calculation}</div>
                 </div>
               </div>
@@ -185,7 +185,7 @@ export function DetailedStats({ character, onClose }: DetailedStatsProps) {
                   <span className="text-2xl font-bold text-accent-purple">{calculations.totalDefense.result}</span>
                 </div>
                 <div className="text-xs text-text-secondary space-y-1">
-                  <div>Fórmula: {calculations.totalDefense.formula}</div>
+                  <div className="text-white">Fórmula: {calculations.totalDefense.formula}</div>
                   <div className="text-accent-purple">= {calculations.totalDefense.calculation}</div>
                 </div>
               </div>
@@ -197,7 +197,7 @@ export function DetailedStats({ character, onClose }: DetailedStatsProps) {
                   <span className="text-2xl font-bold text-accent-gold">{calculations.critRate.result}</span>
                 </div>
                 <div className="text-xs text-text-secondary space-y-1">
-                  <div>Fórmula: {calculations.critRate.formula}</div>
+                  <div className="text-white">Fórmula: {calculations.critRate.formula}</div>
                   <div className="text-accent-gold">= {calculations.critRate.calculation}</div>
                 </div>
               </div>
@@ -206,7 +206,7 @@ export function DetailedStats({ character, onClose }: DetailedStatsProps) {
 
           {/* Atributos Detalhados */}
           <div>
-            <h3 className="text-xl font-bold mb-4">Atributos Detalhados</h3>
+            <h3 className="text-xl font-bold mb-4 text-white">Atributos Detalhados</h3>
             <div className="space-y-4">
               {attributeDetails.map((attr) => (
                 <div

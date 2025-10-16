@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Flame, Target, Hammer, TreePine, Backpack, Store, Castle } from 'lucide-react';
+import { Flame, Target, Hammer, TreePine, Backpack, Store, Castle, Settings } from 'lucide-react';
 import { useCharacterStore } from '../store/characterStore';
 import { characterService } from '../services/character.service';
 import { LoadingSpinner } from '../components/LoadingSpinner';
@@ -10,6 +10,8 @@ import { WelcomeTutorial } from '../components/Tutorial';
 import { useToastContext } from '../components/ToastProvider';
 import { StatsDistribution } from '../components/StatsDistribution';
 import { DetailedStats } from '../components/DetailedStats';
+import { CharacterAvatar } from '../components/CharacterAvatar';
+import { CharacterEditModal } from '../components/CharacterEditModal';
 import { PageLayout } from '../components/layout/PageLayout';
 import { Card, CardHeader, CardBody } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
@@ -23,6 +25,7 @@ export function Dashboard() {
   const [showTutorial, setShowTutorial] = useState(false);
   const [showStatsModal, setShowStatsModal] = useState(false);
   const [showDetailedStats, setShowDetailedStats] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const toast = useToastContext();
 
   useEffect(() => {
@@ -59,6 +62,17 @@ export function Dashboard() {
     return <LoadingSpinner fullscreen message="Carregando dashboard..." size="lg" />;
   }
 
+  const handleSaveAppearance = async (data: { headVariant: string; armsVariant: string; legsVariant: string; feetVariant: string }) => {
+    try {
+      const updated = await characterService.updateCharacterAppearance(selectedCharacter.id, data);
+      selectCharacter(updated);
+      toast.success('Aparência atualizada com sucesso!');
+    } catch (error) {
+      console.error('Error updating appearance:', error);
+      throw error;
+    }
+  };
+
   const quickActions = [
     { icon: <Flame className="w-5 h-5" />, label: 'Farm Mode', path: '/battle', variant: 'danger', tooltip: 'Batalha automática contra monstros!' },
     { icon: <Target className="w-5 h-5" />, label: 'Missões', path: '/quests', variant: 'info', tooltip: 'Complete missões por recompensas' },
@@ -67,6 +81,7 @@ export function Dashboard() {
     { icon: <Backpack className="w-5 h-5" />, label: 'Inventário', path: '/inventory', variant: 'success', tooltip: 'Gerencie itens e equipamentos' },
     { icon: <Store className="w-5 h-5" />, label: 'Marketplace', path: '/marketplace', variant: 'warning', tooltip: 'Compre e venda com outros jogadores' },
     { icon: <Castle className="w-5 h-5" />, label: 'Dungeons', path: '/dungeons', variant: 'danger', tooltip: 'Masmorras desafiadoras com bosses épicos!' },
+    { icon: <Settings className="w-5 h-5" />, label: 'Editar Aparência', action: () => setShowEditModal(true), variant: 'secondary', tooltip: 'Customize a aparência do seu personagem' },
   ] as const;
 
   return (
@@ -75,8 +90,15 @@ export function Dashboard() {
         {/* Character Overview Card */}
         <Card variant="highlighted">
           <div className="text-center mb-6">
-            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-accent-gold to-accent-orange rounded-full mb-4 flex items-center justify-center text-6xl shadow-glow-md">
-              🎮
+            <div className="mx-auto mb-4 flex justify-center">
+              <CharacterAvatar
+                headVariant={selectedCharacter.headVariant}
+                armsVariant={selectedCharacter.armsVariant}
+                legsVariant={selectedCharacter.legsVariant}
+                feetVariant={selectedCharacter.feetVariant}
+                size="md"
+                showBorder={true}
+              />
             </div>
             <h2 className="text-3xl font-bold text-accent-gold mb-1">{selectedCharacter.name}</h2>
             <Badge variant="gold" size="lg">Nível {selectedCharacter.level}</Badge>
@@ -209,11 +231,17 @@ export function Dashboard() {
               <CardHeader title="Ações Rápidas" />
               <CardBody>
                 <div className="grid grid-cols-1 gap-2">
-                  {quickActions.map((action) => (
-                    <Tooltip key={action.path} content={action.tooltip}>
+                  {quickActions.map((action, index) => (
+                    <Tooltip key={index} content={action.tooltip}>
                       <Button
                         variant={action.variant as any}
-                        onClick={() => navigate(action.path)}
+                        onClick={() => {
+                          if ('path' in action && action.path) {
+                            navigate(action.path);
+                          } else if ('action' in action && action.action) {
+                            action.action();
+                          }
+                        }}
                         icon={action.icon}
                         fullWidth
                         className="justify-start"
@@ -250,6 +278,15 @@ export function Dashboard() {
         <DetailedStats
           character={selectedCharacter}
           onClose={() => setShowDetailedStats(false)}
+        />
+      )}
+
+      {showEditModal && selectedCharacter && (
+        <CharacterEditModal
+          character={selectedCharacter}
+          isOpen={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          onSave={handleSaveAppearance}
         />
       )}
     </PageLayout>

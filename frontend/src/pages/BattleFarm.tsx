@@ -23,7 +23,11 @@ export function BattleFarm() {
   // Farm session states
   const [activeSession, setActiveSession] = useState<any | null>(null);
   const [showFleeConfirm, setShowFleeConfirm] = useState(false);
-  const [dismissedSessionId, setDismissedSessionId] = useState<number | null>(null);
+  const [dismissedSessionId, setDismissedSessionId] = useState<number | null>(() => {
+    // Carrega do localStorage ao iniciar
+    const saved = localStorage.getItem('easycraft_dismissed_farm_session');
+    return saved ? parseInt(saved) : null;
+  });
   const pollingInterval = useRef<any>(null);
 
   // Config states
@@ -163,6 +167,7 @@ export function BattleFarm() {
     setError('');
     // Reseta dismissed para permitir modal do novo farm
     setDismissedSessionId(null);
+    localStorage.removeItem('easycraft_dismissed_farm_session');
 
     const config: FarmModeConfig = {
       enemyCode: selectedEnemy,
@@ -220,6 +225,8 @@ export function BattleFarm() {
     // Marca essa sessão como "já vista" para não mostrar de novo
     if (activeSession?.id) {
       setDismissedSessionId(activeSession.id);
+      // Salva no localStorage para persistir entre navegações
+      localStorage.setItem('easycraft_dismissed_farm_session', activeSession.id.toString());
     }
     
     setActiveSession(null);
@@ -520,11 +527,11 @@ export function BattleFarm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Enemy Selection */}
             <div>
-              <label className="block text-sm font-semibold mb-2">1. Escolha o Monstro:</label>
+              <label className="block text-sm font-semibold mb-2 text-white">1. Escolha o Monstro:</label>
               <select
                 value={selectedEnemy}
                 onChange={(e) => setSelectedEnemy(e.target.value)}
-                className="w-full bg-bg-input border border-primary-medium rounded-lg px-4 py-3 focus:outline-none focus:border-accent-gold"
+                className="w-full bg-bg-input border border-primary-medium rounded-lg px-4 py-3 focus:outline-none focus:border-accent-gold text-white"
               >
                 <option value="">Selecione um inimigo...</option>
                 {enemies.map((enemy) => (
@@ -537,13 +544,13 @@ export function BattleFarm() {
 
             {/* Potion Selection */}
             <div>
-              <label className="block text-sm font-semibold mb-2">
+              <label className="block text-sm font-semibold mb-2 text-white">
                 2. Poção Automática ({potions.length} disponíveis):
               </label>
               <select
                 value={selectedPotion}
                 onChange={(e) => setSelectedPotion(e.target.value)}
-                className="w-full bg-bg-input border border-primary-medium rounded-lg px-4 py-3 focus:outline-none focus:border-accent-gold"
+                className="w-full bg-bg-input border border-primary-medium rounded-lg px-4 py-3 focus:outline-none focus:border-accent-gold text-white"
               >
                 <option value="">Sem poção (apenas HP natural)</option>
                 {potions.map((potion) => (
@@ -556,7 +563,7 @@ export function BattleFarm() {
 
             {/* HP Percent */}
             <div>
-              <label className="block text-sm font-semibold mb-2">
+              <label className="block text-sm font-semibold mb-2 text-white">
                 3. Usar poção quando HP {'<'} {hpPercent}%:
               </label>
               <input
@@ -577,7 +584,7 @@ export function BattleFarm() {
 
             {/* Max Battles */}
             <div>
-              <label className="block text-sm font-semibold mb-2">
+              <label className="block text-sm font-semibold mb-2 text-white">
                 4. Máximo de batalhas:
               </label>
               <input
@@ -595,8 +602,8 @@ export function BattleFarm() {
           </div>
 
           <div className="mt-6 bg-accent-blue/10 border border-accent-blue rounded-lg p-4">
-            <p className="text-sm mb-2">📋 <strong>Como funciona:</strong></p>
-            <ul className="text-sm text-text-secondary space-y-1 ml-4">
+            <p className="text-sm mb-2 text-white">📋 <strong>Como funciona:</strong></p>
+            <ul className="text-sm text-white space-y-1 ml-4">
               <li>• O jogo vai lutar automaticamente contra o monstro escolhido</li>
               <li>• Quando seu HP ficar abaixo de {hpPercent}%, usa a poção automaticamente</li>
               <li>• Para quando: acabar as poções + HP baixo, morrer, ou atingir {maxBattles} batalhas</li>

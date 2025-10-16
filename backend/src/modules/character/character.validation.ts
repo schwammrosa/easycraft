@@ -21,3 +21,18 @@ export const createCharacterSchema = z.object({
     .string()
     .refine((val) => VALID_VARIANTS.includes(val), 'Variante de pés inválida'),
 });
+
+export const updateCharacterAppearanceSchema = z.object({
+  headVariant: z
+    .string()
+    .refine((val) => VALID_VARIANTS.includes(val), 'Variante de cabeça inválida'),
+  armsVariant: z
+    .string()
+    .refine((val) => VALID_VARIANTS.includes(val), 'Variante de braços inválida'),
+  legsVariant: z
+    .string()
+    .refine((val) => VALID_VARIANTS.includes(val), 'Variante de pernas inválida'),
+  feetVariant: z
+    .string()
+    .refine((val) => VALID_VARIANTS.includes(val), 'Variante de pés inválida'),
+});

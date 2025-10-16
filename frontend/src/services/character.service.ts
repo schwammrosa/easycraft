@@ -35,4 +35,20 @@ export const characterService = {
     const response = await api.get<ApiResponse<{ cost: number }>>(`/characters/${characterId}/stats/reset-cost`);
     return response.data.data!.cost;
   },
+
+  async updateCharacterAppearance(
+    characterId: number,
+    data: {
+      headVariant: string;
+      armsVariant: string;
+      legsVariant: string;
+      feetVariant: string;
+    }
+  ): Promise<Character> {
+    const response = await api.put<ApiResponse<{ character: Character }>>(
+      `/characters/${characterId}/appearance`,
+      data
+    );
+    return response.data.data!.character;
+  },
 };

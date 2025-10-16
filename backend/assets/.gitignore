@@ -1,0 +1,10 @@
+# Ignore todas as imagens (use storage externo em produção)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg
+
+# Mas mantenha a estrutura de pastas
+!.gitkeep

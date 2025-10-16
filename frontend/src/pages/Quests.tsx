@@ -116,17 +116,17 @@ export function Quests() {
 
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-lg">
-                  <span>XP:</span>
+                  <span className="text-white">XP:</span>
                   <span className="text-accent-blue font-bold">+{rewards.xpGained}</span>
                 </div>
                 <div className="flex justify-between text-lg">
-                  <span>Gold:</span>
+                  <span className="text-white">Gold:</span>
                   <span className="text-accent-gold font-bold">+{rewards.goldGained}</span>
                 </div>
 
                 {rewards.itemsGained.length > 0 && (
                   <div>
-                    <p className="font-bold mb-2">Itens:</p>
+                    <p className="font-bold mb-2 text-white">Itens:</p>
                     {rewards.itemsGained.map((item, i) => (
                       <div key={i} className="text-sm text-accent-green">
                         • {item.itemCode} x{item.quantity}
@@ -197,8 +197,8 @@ export function Quests() {
                   {/* Progress Bar */}
                   <div className="mb-4">
                     <div className="flex justify-between text-sm mb-1">
-                      <span>Progresso</span>
-                      <span>
+                      <span className="text-white">Progresso</span>
+                      <span className="text-white">
                         {cq.progress} / {cq.quest.targetAmount}
                       </span>
                     </div>
@@ -215,11 +215,11 @@ export function Quests() {
                   {/* Rewards */}
                   <div className="border-t border-primary-medium pt-4 mb-4">
                     <div className="flex justify-between text-sm">
-                      <span>XP:</span>
+                      <span className="text-white">XP:</span>
                       <span className="text-accent-blue">{cq.quest.xpReward}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span>Gold:</span>
+                      <span className="text-white">Gold:</span>
                       <span className="text-accent-gold">{cq.quest.goldReward}</span>
                     </div>
                   </div>
@@ -270,10 +270,10 @@ export function Quests() {
                   <p className="text-sm text-text-secondary mb-4">{quest.description}</p>
 
                   <div className="text-sm mb-4">
-                    <p>
+                    <p className="text-white">
                       <span className="text-text-secondary">Objetivo:</span> {quest.targetAmount}
                     </p>
-                    <p>
+                    <p className="text-white">
                       <span className="text-text-secondary">Nível Requerido:</span> {quest.requiredLevel}
                     </p>
                     {quest.isRepeatable && (
@@ -284,11 +284,11 @@ export function Quests() {
                   {/* Rewards */}
                   <div className="border-t border-primary-medium pt-4 mb-4">
                     <div className="flex justify-between text-sm">
-                      <span>XP:</span>
+                      <span className="text-white">XP:</span>
                       <span className="text-accent-blue">{quest.xpReward}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span>Gold:</span>
+                      <span className="text-white">Gold:</span>
                       <span className="text-accent-gold">{quest.goldReward}</span>
                     </div>
                   </div>

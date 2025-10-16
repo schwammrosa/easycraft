@@ -328,7 +328,7 @@ export function Marketplace() {
                     setTypeFilter(e.target.value);
                     setPage(1);
                   }}
-                  className="px-4 py-2 bg-bg-input border border-primary-medium rounded-lg focus:outline-none focus:border-accent-gold"
+                  className="px-4 py-2 bg-bg-input border border-primary-medium rounded-lg focus:outline-none focus:border-accent-gold text-white"
                 >
                   <option value="">Todos os tipos</option>
                   <option value="weapon">Armas</option>
@@ -341,7 +341,7 @@ export function Marketplace() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
-                  className="px-4 py-2 bg-bg-input border border-primary-medium rounded-lg focus:outline-none focus:border-accent-gold"
+                  className="px-4 py-2 bg-bg-input border border-primary-medium rounded-lg focus:outline-none focus:border-accent-gold text-white"
                 >
                   <option value="newest">Mais Recentes</option>
                   <option value="oldest">Mais Antigos</option>
@@ -525,7 +525,7 @@ export function Marketplace() {
                                 <span className="text-text-secondary">
                                   {historyType === 'purchases' ? 'Vendedor: ' : 'Comprador: '}
                                 </span>
-                                <span className="font-semibold">
+                                <span className="font-semibold text-white">
                                   {historyType === 'purchases' 
                                     ? transaction.seller.name 
                                     : transaction.buyer.name}
@@ -533,7 +533,7 @@ export function Marketplace() {
                               </div>
                               <div>
                                 <span className="text-text-secondary">Data: </span>
-                                <span className="text-sm">
+                                <span className="text-sm text-white">
                                   {new Date(transaction.createdAt).toLocaleDateString('pt-BR')}
                                 </span>
                               </div>

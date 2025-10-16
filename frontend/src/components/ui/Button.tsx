@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { Loader2 } from 'lucide-react';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'ghost' | 'warning';
+  variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'ghost' | 'warning' | 'info' | 'purple';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   icon?: React.ReactNode;
@@ -28,11 +28,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary: 'bg-accent-blue hover:bg-accent-blue-dark text-white focus:ring-accent-blue shadow-md hover:shadow-lg active:scale-95',
-      secondary: 'bg-primary-medium hover:bg-primary-light text-text-primary focus:ring-primary-light',
+      secondary: 'bg-primary-medium hover:bg-primary-light text-white focus:ring-primary-light',
       danger: 'bg-accent-red hover:bg-accent-red-dark text-white focus:ring-accent-red shadow-md hover:shadow-lg active:scale-95',
       success: 'bg-accent-green hover:bg-accent-green-dark text-white focus:ring-accent-green shadow-md hover:shadow-lg active:scale-95',
       warning: 'bg-accent-gold hover:bg-accent-gold-dark text-white focus:ring-accent-gold shadow-md hover:shadow-lg active:scale-95 font-bold',
-      ghost: 'bg-transparent hover:bg-bg-hover text-text-primary focus:ring-primary-light',
+      info: 'bg-accent-blue hover:bg-accent-blue-dark text-white focus:ring-accent-blue shadow-md hover:shadow-lg active:scale-95',
+      purple: 'bg-accent-purple hover:bg-accent-purple-dark text-white focus:ring-accent-purple shadow-md hover:shadow-lg active:scale-95',
+      ghost: 'bg-transparent hover:bg-bg-hover text-white focus:ring-primary-light',
     };
 
     const sizes = {

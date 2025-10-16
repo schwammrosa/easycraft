@@ -8,6 +8,13 @@ export interface CreateCharacterDTO {
   feetVariant: string;
 }
 
+export interface UpdateCharacterAppearanceDTO {
+  headVariant: string;
+  armsVariant: string;
+  legsVariant: string;
+  feetVariant: string;
+}
+
 export interface CharacterWithStats extends Character {
   stats: CharacterStats | null;
 }

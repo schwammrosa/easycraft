@@ -46,7 +46,7 @@ export function Login() {
           <CardBody>
             <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2">
+              <label htmlFor="email" className="block text-sm font-medium mb-2 text-white">
                 Email
               </label>
               <input
@@ -61,7 +61,7 @@ export function Login() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-2">
+              <label htmlFor="password" className="block text-sm font-medium mb-2 text-white">
                 Senha
               </label>
               <input

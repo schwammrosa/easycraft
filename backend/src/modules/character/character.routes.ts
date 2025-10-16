@@ -30,6 +30,13 @@ router.post('/', (req, res) => characterController.createCharacter(req, res));
 router.get('/:id', (req, res) => characterController.getCharacter(req, res));
 
 /**
+ * @route   PUT /api/characters/:id/appearance
+ * @desc    Update character appearance
+ * @access  Private
+ */
+router.put('/:id/appearance', (req, res) => characterController.updateCharacterAppearance(req, res));
+
+/**
  * @route   DELETE /api/characters/:id
  * @desc    Delete character
  * @access  Private
