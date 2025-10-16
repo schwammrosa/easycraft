@@ -101,7 +101,8 @@ app.post('/api/admin/create-floors', async (_req, res) => {
     const dungeons = await prisma.dungeon.findMany({ orderBy: { id: 'asc' } });
     
     if (dungeons.length === 0) {
-      return res.status(400).json({ success: false, error: 'No dungeons found. Run seed first!' });
+      res.status(400).json({ success: false, error: 'No dungeons found. Run seed first!' });
+      return;
     }
     
     // Clear existing floors
