@@ -4,12 +4,15 @@
 
 ![Version](https://img.shields.io/badge/version-1.0.0--alpha-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Status](https://img.shields.io/badge/status-MVP_COMPLETE-brightgreen)
+![Status](https://img.shields.io/badge/status-ONLINE-brightgreen)
 ![Progress](https://img.shields.io/badge/progress-100%25-success)
+![Deploy](https://img.shields.io/badge/deploy-Vercel%20%2B%20Render-blue)
 
 **Um MMORPG baseado em navegador focado em progressão e economia, sem complexidade gráfica**
 
-[Visão Geral](#-visão-geral) • [Features](#-features) • [Tech Stack](#-tech-stack) • [Quick Start](#-quick-start) • [Documentação](#-documentação)
+🎮 **[JOGAR AGORA](https://easycraft.vercel.app)** 🎮
+
+[Visão Geral](#-visão-geral) • [Features](#-features) • [Tech Stack](#-tech-stack) • [Deploy](#-deploy) • [Documentação](#-documentação)
 
 </div>
 
@@ -27,6 +30,7 @@ EasyCraft é um MMORPG web minimalista que foca em mecânicas de progressão, si
 - 🛠️ **Sistema de Craft**: Transforme materiais em itens valiosos
 - 📈 **Progressão Significativa**: Cada nível e item fazem diferença
 - 🌐 **Cross-Platform**: Jogue em qualquer navegador moderno
+- 🆓 **100% Gratuito**: Deploy gratuito no Vercel + Render
 
 ---
 
@@ -198,6 +202,36 @@ easycraft/
 
 ---
 
+## 🚀 Deploy
+
+### **Status de Produção**
+
+```
+🌐 Frontend:  https://easycraft.vercel.app
+📡 Backend:   https://easycraft-backend.onrender.com
+📊 Database:  PostgreSQL no Render
+💰 Custo:     R$ 0,00/mês (100% GRÁTIS!)
+```
+
+### **Arquitetura**
+- **Frontend**: Vercel (React + Vite)
+- **Backend**: Render (Node.js + Express)
+- **Database**: Render (PostgreSQL 16)
+- **CI/CD**: Auto-deploy do GitHub
+
+### **Monitoramento**
+- Health Check: https://easycraft-backend.onrender.com/api/health
+- Logs Backend: [Render Dashboard](https://dashboard.render.com)
+- Logs Frontend: [Vercel Dashboard](https://vercel.com/dashboard)
+
+### **Documentação de Deploy**
+- [Guia Completo de Deploy](DEPLOY_SUCESSO.md)
+- [Próximos Passos](PROXIMOS_PASSOS.md)
+- Deploy Vercel: Automático via GitHub
+- Deploy Render: Automático via GitHub
+
+---
+
 ## 🧪 Testing
 
 ```bash
@@ -244,9 +278,9 @@ Este projeto está sob a licença MIT. Veja [LICENSE](LICENSE) para mais detalhe
 
 ## 📞 Contato
 
-- **Discord**: [Link do servidor]
-- **Email**: contato@easycraft.com
-- **Website**: https://easycraft.com
+- **Jogo Online**: https://easycraft.vercel.app
+- **Backend API**: https://easycraft-backend.onrender.com
+- **GitHub**: https://github.com/schwammrosa/easycraft
 
 ---
 
@@ -259,6 +293,8 @@ Este projeto está sob a licença MIT. Veja [LICENSE](LICENSE) para mais detalhe
 ---
 
 <div align="center">
+
+🎮 **[JOGAR AGORA](https://easycraft.vercel.app)** 🎮
 
 **[⬆ Voltar ao topo](#-easycraft---mmorpg-web-minimalista)**
 
