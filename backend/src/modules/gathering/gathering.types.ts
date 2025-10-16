@@ -8,7 +8,7 @@ export interface GatherNodeWithDrops {
   type: GatherNodeType;
   requiredLevel: number;
   gatherTime: number;
-  energyCost: number;
+  goldCost: number;
   xpReward: number;
   dropTable: Record<string, { chance: number; quantity: [number, number] }>;
 }
@@ -33,7 +33,8 @@ export interface GatherSessionProgress {
   levelsGained: number;
   startLevel: number;
   endLevel: number;
-  energyUsed: number;
+  goldSpent: number;
+  goldRefunded: number;
   stoppedReason: string | null;
   stoppedMessage: string | null;
   startedAt: Date;
@@ -45,6 +46,6 @@ export interface GatherResult {
   success: boolean;
   itemsGathered: Array<{ itemCode: string; quantity: number }>;
   xpGained: number;
-  energyUsed: number;
+  goldUsed: number;
   message: string;
 }

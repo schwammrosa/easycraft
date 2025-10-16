@@ -18,15 +18,12 @@ export class GatheringController {
         return;
       }
 
-      // Get character level
+      // Get character (only for validation)
       const { characterService } = await import('../character/character.service');
-      const character = await characterService.getCharacterById(characterId, req.user!.userId);
+      await characterService.getCharacterById(characterId, req.user!.userId);
 
-      // Get gather nodes within level range
-      const minLevel = Math.max(1, character.level - 2);
-      const maxLevel = character.level + 5;
-      
-      const nodes = await gatheringService.getGatherNodes(minLevel, maxLevel);
+      // Get ALL gather nodes - frontend will handle level restrictions
+      const nodes = await gatheringService.getGatherNodes();
 
       res.json({
         success: true,

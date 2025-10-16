@@ -35,6 +35,10 @@ export function BattleFarm() {
   const [selectedPotion, setSelectedPotion] = useState<string>('');
   const [hpPercent, setHpPercent] = useState<number>(50);
   const [maxBattles, setMaxBattles] = useState<number>(50);
+  
+  // Tab state
+  const [activeTab, setActiveTab] = useState<'config' | 'history'>('config');
+  const [history, setHistory] = useState<any[]>([]);
 
   useEffect(() => {
     if (!selectedCharacter) {
@@ -55,12 +59,14 @@ export function BattleFarm() {
     if (!selectedCharacter) return;
 
     try {
-      const [enemyList, inventory] = await Promise.all([
+      const [enemyList, inventory, farmHistory] = await Promise.all([
         battleService.getEnemies(selectedCharacter.id),
-        inventoryService.getInventory(selectedCharacter.id)
+        inventoryService.getInventory(selectedCharacter.id),
+        battleService.getFarmHistory(selectedCharacter.id, 10)
       ]);
       
       setEnemies(enemyList);
+      setHistory(farmHistory);
       
       const potionItems = inventory.filter(inv => 
         inv.item.type === 'consumable' && 
@@ -520,11 +526,37 @@ export function BattleFarm() {
           </div>
         )}
 
-        {/* Farm Configuration */}
-        <div className="bg-bg-panel rounded-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-6 text-accent-gold">⚙️ Configuração do Farm</h2>
+        {/* Farm Configuration with Tabs */}
+        {!activeSession && (
+          <div className="bg-bg-panel rounded-lg p-6 mb-8">
+            {/* Tabs */}
+            <div className="flex gap-2 mb-6 border-b border-primary-medium">
+              <button
+                onClick={() => setActiveTab('config')}
+                className={`px-6 py-3 font-semibold transition-all ${
+                  activeTab === 'config'
+                    ? 'text-accent-gold border-b-2 border-accent-gold'
+                    : 'text-text-secondary hover:text-text-primary'
+                }`}
+              >
+                ⚙️ Configuração do Farm
+              </button>
+              <button
+                onClick={() => setActiveTab('history')}
+                className={`px-6 py-3 font-semibold transition-all ${
+                  activeTab === 'history'
+                    ? 'text-accent-gold border-b-2 border-accent-gold'
+                    : 'text-text-secondary hover:text-text-primary'
+                }`}
+              >
+                📜 Histórico
+              </button>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Configuration Tab */}
+            {activeTab === 'config' && (
+              <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Enemy Selection */}
             <div>
               <label className="block text-sm font-semibold mb-2 text-white">1. Escolha o Monstro:</label>
@@ -599,33 +631,105 @@ export function BattleFarm() {
                 Recomendado: 20-100 batalhas
               </p>
             </div>
-          </div>
+                </div>
 
-          <div className="mt-6 bg-accent-blue/10 border border-accent-blue rounded-lg p-4">
-            <p className="text-sm mb-2 text-white">📋 <strong>Como funciona:</strong></p>
-            <ul className="text-sm text-white space-y-1 ml-4">
-              <li>• O jogo vai lutar automaticamente contra o monstro escolhido</li>
-              <li>• Quando seu HP ficar abaixo de {hpPercent}%, usa a poção automaticamente</li>
-              <li>• Para quando: acabar as poções + HP baixo, morrer, ou atingir {maxBattles} batalhas</li>
-              <li>• Todos XP, Gold e Itens são coletados automaticamente</li>
-            </ul>
-          </div>
+                <div className="mt-6 bg-accent-blue/10 border border-accent-blue rounded-lg p-4">
+                  <p className="text-sm mb-2 text-white">📋 <strong>Como funciona:</strong></p>
+                  <ul className="text-sm text-white space-y-1 ml-4">
+                    <li>• O jogo vai lutar automaticamente contra o monstro escolhido</li>
+                    <li>• Quando seu HP ficar abaixo de {hpPercent}%, usa a poção automaticamente</li>
+                    <li>• Para quando: acabar as poções + HP baixo, morrer, ou atingir {maxBattles} batalhas</li>
+                    <li>• Todos XP, Gold e Itens são coletados automaticamente</li>
+                  </ul>
+                </div>
 
-          <button
-            onClick={handleStartFarm}
-            disabled={activeSession?.status === 'running' || !selectedEnemy || selectedCharacter.hp <= 0}
-            className="w-full mt-6 py-4 bg-accent-gold hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-bold text-lg transition-colors"
-          >
-            {activeSession?.status === 'running' ? (
-              <span className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                Farm em Andamento...
-              </span>
-            ) : (
-              '🚀 INICIAR FARM MODE!'
+                <button
+                  onClick={handleStartFarm}
+                  disabled={activeSession?.status === 'running' || !selectedEnemy || selectedCharacter.hp <= 0}
+                  className="w-full mt-6 py-4 bg-accent-gold hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-bold text-lg transition-colors"
+                >
+                  {activeSession?.status === 'running' ? (
+                    <span className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                      Farm em Andamento...
+                    </span>
+                  ) : (
+                    '🚀 INICIAR FARM MODE!'
+                  )}
+                </button>
+              </div>
             )}
-          </button>
-        </div>
+
+            {/* History Tab */}
+            {activeTab === 'history' && (
+              <div className="space-y-4">
+                {history.length === 0 ? (
+                  <div className="text-center py-12 text-text-secondary">
+                    <p className="text-4xl mb-4">📜</p>
+                    <p>Nenhuma sessão de farm ainda</p>
+                  </div>
+                ) : (
+                  history.map((session) => (
+                    <div key={session.id} className="bg-primary-dark rounded-lg p-6">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h4 className="font-bold">{session.enemyName || 'Monstro'}</h4>
+                          <p className="text-sm text-text-secondary">
+                            {new Date(session.startedAt).toLocaleString()}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <span className={`font-semibold ${
+                            session.status === 'completed' ? 'text-accent-green' :
+                            session.status === 'fled' ? 'text-accent-red' :
+                            'text-accent-blue'
+                          }`}>
+                            {session.status === 'completed' ? '✅ Completo' :
+                             session.status === 'fled' ? '❌ Fugiu' :
+                             '⌛ Em Progresso'}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* Stats Grid */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
+                        <div>
+                          <span className="text-text-secondary">Batalhas:</span>
+                          <p className="font-semibold">{session.battlesWon}/{session.maxBattles}</p>
+                        </div>
+                        <div>
+                          <span className="text-text-secondary">XP Ganha:</span>
+                          <p className="font-semibold text-accent-blue">+{session.totalXpGained}</p>
+                        </div>
+                        <div>
+                          <span className="text-text-secondary">Gold:</span>
+                          <p className="font-semibold text-accent-gold">+{session.totalGoldEarned}g</p>
+                        </div>
+                        <div>
+                          <span className="text-text-secondary">Levels:</span>
+                          <p className="font-semibold text-accent-green">
+                            {session.levelsGained > 0 ? `+${session.levelsGained}` : '-'}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Stop Reason */}
+                      {session.stopReason && (
+                        <div className={`p-3 rounded-lg text-sm ${
+                          session.status === 'completed' ? 'bg-accent-green/20 border border-accent-green text-accent-green' :
+                          session.status === 'fled' ? 'bg-accent-red/20 border border-accent-red text-accent-red' :
+                          'bg-accent-blue/20 border border-accent-blue text-accent-blue'
+                        }`}>
+                          <p>{session.stopReason}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {selectedCharacter.hp <= 0 && (
           <div className="bg-accent-red/20 border border-accent-red rounded-lg p-6 text-center">

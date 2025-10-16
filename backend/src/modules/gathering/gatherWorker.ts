@@ -31,24 +31,70 @@ class GatherWorker {
       clearTimeout(timeout);
       this.activeSessions.delete(sessionId);
 
-      // Apply 30% penalty for cancelling
+      // Apply 50% penalty for cancelling (items + XP + gold refund)
       const session = await prisma.gatherSession.findUnique({
         where: { id: sessionId },
         include: { character: true }
       });
 
       if (session) {
-        // Remove 30% of accumulated rewards
-        const penaltyXp = Math.floor(session.totalXpGained * 0.3);
-
+        // Calculate 50% penalty
+        const penaltyXp = Math.floor(session.totalXpGained * 0.5);
         const newXp = Math.max(0, Number(session.character.xp) - penaltyXp);
 
+        // Remove 50% of gathered items from inventory
+        const gatheredItems = session.totalItemsGathered as Array<{ itemCode: string; quantity: number }>;
+        const itemsToRemove: Array<{ itemCode: string; quantity: number; removed: number }> = [];
+
+        for (const item of gatheredItems) {
+          const penaltyQuantity = Math.floor(item.quantity * 0.5);
+          
+          // Try to remove items from inventory
+          const inventory = await prisma.inventory.findFirst({
+            where: {
+              characterId: session.characterId,
+              item: {
+                code: item.itemCode,
+              },
+            },
+          });
+
+          if (inventory && inventory.quantity >= penaltyQuantity) {
+            await prisma.inventory.update({
+              where: { id: inventory.id },
+              data: {
+                quantity: { decrement: penaltyQuantity },
+              },
+            });
+            itemsToRemove.push({ itemCode: item.itemCode, quantity: item.quantity, removed: penaltyQuantity });
+          } else if (inventory) {
+            // Remove what we can
+            await prisma.inventory.update({
+              where: { id: inventory.id },
+              data: {
+                quantity: 0,
+              },
+            });
+            itemsToRemove.push({ itemCode: item.itemCode, quantity: item.quantity, removed: inventory.quantity });
+          }
+        }
+
+        // Calculate gold refund (50% of total spent)
+        const goldRefund = Math.floor(((session as any).goldSpent || 0) * 0.5);
+
+        // Update character (remove XP, refund 50% gold)
         await prisma.character.update({
           where: { id: session.characterId },
           data: {
             xp: newXp,
+            gold: { increment: goldRefund },
           }
         });
+
+        // Build penalty message
+        const itemsPenaltyText = itemsToRemove
+          .map(item => `-${item.removed}x ${item.itemCode}`)
+          .join(', ');
 
         // Update session with penalty info
         await prisma.gatherSession.update({
@@ -56,12 +102,13 @@ class GatherWorker {
           data: {
             status: 'cancelled',
             stoppedReason: 'cancelled',
-            stoppedMessage: `⚠️ COLETA CANCELADA! Perdeu 30% da XP acumulada (-${penaltyXp} XP)`,
+            stoppedMessage: `⚠️ COLETA CANCELADA! Penalidade de 50%:\n- Perdeu ${penaltyXp} XP\n- Perdeu itens: ${itemsPenaltyText || 'nenhum'}\n+ Reembolso: ${goldRefund}g (50% do custo)`,
+            ...(goldRefund ? { goldRefunded: goldRefund } : {}),
             completedAt: new Date(),
-          },
+          } as any,
         });
 
-        logger.info(`Gather session ${sessionId} cancelled with 30% penalty`);
+        logger.info(`Gather session ${sessionId} cancelled with 50% penalty (XP: -${penaltyXp}, Gold refund: +${goldRefund}g)`);
       }
     }
   }
@@ -126,7 +173,6 @@ class GatherWorker {
           totalGathers: { increment: 1 },
           successfulGathers: { increment: 1 },
           lastGatherAt: new Date(),
-          energyUsed: { increment: node.energyCost }
         }
       });
 
@@ -237,10 +283,15 @@ class GatherWorker {
 
     // Give gathered items
     for (const item of items) {
-      await inventoryService.giveItem(characterId, {
-        itemCode: item.itemCode,
-        quantity: item.quantity,
-      });
+      try {
+        await inventoryService.giveItem(characterId, {
+          itemCode: item.itemCode,
+          quantity: item.quantity,
+        });
+      } catch (error) {
+        logger.error(`Failed to give item ${item.itemCode} to character ${characterId}:`, error);
+        // Continue with other items even if one fails
+      }
     }
 
     // Update quests

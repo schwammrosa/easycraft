@@ -332,6 +332,41 @@ export class BattleController {
       });
     }
   }
+
+  async getFarmHistory(req: Request, res: Response): Promise<void> {
+    try {
+      const characterId = parseInt(req.params.characterId);
+      const limit = parseInt(req.query.limit as string) || 10;
+
+      if (isNaN(characterId)) {
+        res.status(400).json({
+          success: false,
+          error: {
+            code: 'INVALID_ID',
+            message: 'ID do personagem inválido',
+          },
+        });
+        return;
+      }
+
+      const sessions = await battleService.getFarmHistory(characterId, limit);
+
+      res.json({
+        success: true,
+        data: { sessions },
+      });
+    } catch (error) {
+      logger.error('Get farm history error:', error);
+
+      res.status(500).json({
+        success: false,
+        error: {
+          code: 'INTERNAL_ERROR',
+          message: 'Erro ao buscar histórico de farm',
+        },
+      });
+    }
+  }
 }
 
 export const battleController = new BattleController();

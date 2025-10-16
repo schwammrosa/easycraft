@@ -63,4 +63,11 @@ router.get('/:characterId/farm/active', (req, res) => battleController.getActive
  */
 router.get('/:characterId/farm/latest', (req, res) => battleController.getLatestFarmSession(req, res));
 
+/**
+ * @route   GET /api/battle/:characterId/farm/history
+ * @desc    Get farm session history for character
+ * @access  Private
+ */
+router.get('/:characterId/farm/history', (req, res) => battleController.getFarmHistory(req, res));
+
 export default router;

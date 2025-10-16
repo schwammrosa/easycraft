@@ -118,4 +118,11 @@ export const battleService = {
     const response = await api.get(`/battle/${characterId}/farm/latest`);
     return response.data.data.session;
   },
+
+  async getFarmHistory(characterId: number, limit: number = 10): Promise<any[]> {
+    const response = await api.get(`/battle/${characterId}/farm/history`, {
+      params: { limit }
+    });
+    return response.data.data.sessions || [];
+  },
 };

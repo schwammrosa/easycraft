@@ -5,14 +5,10 @@ import { gatherWorker } from './gatherWorker';
 const prisma = new PrismaClient();
 
 class GatheringService {
-  async getGatherNodes(minLevel: number, maxLevel: number): Promise<GatherNodeWithDrops[]> {
+  async getGatherNodes(): Promise<GatherNodeWithDrops[]> {
+    // Retorna TODOS os nodos, ordenados por nível
+    // Frontend decide quais desabilitar baseado no nível do personagem
     const nodes = await prisma.gatherNode.findMany({
-      where: {
-        requiredLevel: {
-          gte: Math.max(1, minLevel - 2),
-          lte: maxLevel + 3,
-        },
-      },
       orderBy: [
         { requiredLevel: 'asc' },
         { name: 'asc' }
@@ -21,6 +17,7 @@ class GatheringService {
 
     return nodes.map(node => ({
       ...node,
+      goldCost: (node as any).goldCost || (node as any).energyCost || 0,
       dropTable: node.dropTable as any,
     }));
   }
@@ -78,6 +75,23 @@ class GatheringService {
       throw new Error('Número de coletas deve estar entre 1 e 100');
     }
 
+    // Calculate total gold cost
+    const totalGoldCost = ((node as any).goldCost || (node as any).energyCost || 0) * dto.maxGathers;
+
+    // Check if character has enough gold
+    const currentGold = Number(character.gold);
+    if (currentGold < totalGoldCost) {
+      throw new Error(`Gold insuficiente! Necessário: ${totalGoldCost}g, Disponível: ${currentGold}g`);
+    }
+
+    // Deduct gold BEFORE starting session (transaction)
+    await prisma.character.update({
+      where: { id: characterId },
+      data: {
+        gold: currentGold - totalGoldCost,
+      },
+    });
+
     // Create gather session
     const session = await prisma.gatherSession.create({
       data: {
@@ -88,7 +102,8 @@ class GatheringService {
         status: 'running',
         startLevel: character.level,
         endLevel: character.level,
-      },
+        ...(totalGoldCost ? { goldSpent: totalGoldCost } : {}),
+      } as any,
     });
 
     // Start worker
@@ -109,6 +124,8 @@ class GatheringService {
     return {
       ...session,
       totalItemsGathered: session.totalItemsGathered as any,
+      goldSpent: (session as any).goldSpent || 0,
+      goldRefunded: (session as any).goldRefunded || 0,
     };
   }
 
@@ -142,6 +159,8 @@ class GatheringService {
     return sessions.map(session => ({
       ...session,
       totalItemsGathered: session.totalItemsGathered as any,
+      goldSpent: (session as any).goldSpent || 0,
+      goldRefunded: (session as any).goldRefunded || 0,
     }));
   }
 
@@ -160,6 +179,8 @@ class GatheringService {
     return {
       ...session,
       totalItemsGathered: session.totalItemsGathered as any,
+      goldSpent: (session as any).goldSpent || 0,
+      goldRefunded: (session as any).goldRefunded || 0,
     };
   }
 }

@@ -9,7 +9,7 @@ export interface GatherNode {
   type: 'wood' | 'ore' | 'herb' | 'crystal' | 'leather';
   requiredLevel: number;
   gatherTime: number;
-  energyCost: number;
+  goldCost: number;
   xpReward: number;
   dropTable: Record<string, { chance: number; quantity: [number, number] }>;
 }
@@ -29,7 +29,8 @@ export interface GatherSession {
   levelsGained: number;
   startLevel: number;
   endLevel: number;
-  energyUsed: number;
+  goldSpent: number;
+  goldRefunded: number;
   stoppedReason: string | null;
   stoppedMessage: string | null;
   startedAt: string;

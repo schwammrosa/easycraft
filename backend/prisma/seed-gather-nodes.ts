@@ -16,7 +16,7 @@ async function seedGatherNodes() {
       type: 'wood' as any,
       requiredLevel: 1,
       gatherTime: 3,
-      energyCost: 5,
+      goldCost: 5,
       xpReward: 5,
       dropTable: {
         wood: { chance: 1.0, quantity: [2, 4] },
@@ -29,7 +29,7 @@ async function seedGatherNodes() {
       type: 'wood' as any,
       requiredLevel: 3,
       gatherTime: 4,
-      energyCost: 6,
+      goldCost: 6,
       xpReward: 8,
       dropTable: {
         wood: { chance: 1.0, quantity: [3, 5] },
@@ -43,7 +43,7 @@ async function seedGatherNodes() {
       type: 'wood' as any,
       requiredLevel: 8,
       gatherTime: 6,
-      energyCost: 10,
+      goldCost: 10,
       xpReward: 20,
       dropTable: {
         wood: { chance: 1.0, quantity: [4, 7] },
@@ -61,7 +61,7 @@ async function seedGatherNodes() {
       type: 'ore' as any,
       requiredLevel: 2,
       gatherTime: 5,
-      energyCost: 8,
+      goldCost: 8,
       xpReward: 10,
       dropTable: {
         iron_ore: { chance: 1.0, quantity: [2, 4] },
@@ -75,7 +75,7 @@ async function seedGatherNodes() {
       type: 'ore' as any,
       requiredLevel: 1,
       gatherTime: 4,
-      energyCost: 6,
+      goldCost: 6,
       xpReward: 6,
       dropTable: {
         copper_ore: { chance: 1.0, quantity: [3, 5] },
@@ -88,7 +88,7 @@ async function seedGatherNodes() {
       type: 'ore' as any,
       requiredLevel: 10,
       gatherTime: 8,
-      energyCost: 15,
+      goldCost: 15,
       xpReward: 35,
       dropTable: {
         mythril_ore: { chance: 0.9, quantity: [1, 3] },
@@ -102,7 +102,7 @@ async function seedGatherNodes() {
       type: 'ore' as any,
       requiredLevel: 3,
       gatherTime: 4,
-      energyCost: 6,
+      goldCost: 6,
       xpReward: 8,
       dropTable: {
         coal: { chance: 1.0, quantity: [3, 6] },
@@ -119,7 +119,7 @@ async function seedGatherNodes() {
       type: 'herb' as any,
       requiredLevel: 1,
       gatherTime: 2,
-      energyCost: 4,
+      goldCost: 4,
       xpReward: 4,
       dropTable: {
         herb: { chance: 1.0, quantity: [3, 6] },
@@ -132,7 +132,7 @@ async function seedGatherNodes() {
       type: 'herb' as any,
       requiredLevel: 5,
       gatherTime: 4,
-      energyCost: 8,
+      goldCost: 8,
       xpReward: 15,
       dropTable: {
         herb: { chance: 1.0, quantity: [2, 4] },
@@ -146,7 +146,7 @@ async function seedGatherNodes() {
       type: 'herb' as any,
       requiredLevel: 9,
       gatherTime: 6,
-      energyCost: 12,
+      goldCost: 12,
       xpReward: 25,
       dropTable: {
         herb: { chance: 1.0, quantity: [4, 7] },
@@ -165,7 +165,7 @@ async function seedGatherNodes() {
       type: 'crystal' as any,
       requiredLevel: 6,
       gatherTime: 6,
-      energyCost: 12,
+      goldCost: 12,
       xpReward: 20,
       dropTable: {
         crystal: { chance: 1.0, quantity: [1, 3] },
@@ -179,7 +179,7 @@ async function seedGatherNodes() {
       type: 'crystal' as any,
       requiredLevel: 12,
       gatherTime: 10,
-      energyCost: 20,
+      goldCost: 20,
       xpReward: 50,
       dropTable: {
         crystal: { chance: 1.0, quantity: [2, 4] },
@@ -198,7 +198,7 @@ async function seedGatherNodes() {
       type: 'leather' as any,
       requiredLevel: 2,
       gatherTime: 5,
-      energyCost: 8,
+      goldCost: 8,
       xpReward: 10,
       dropTable: {
         leather: { chance: 1.0, quantity: [2, 4] },
@@ -212,7 +212,7 @@ async function seedGatherNodes() {
       type: 'leather' as any,
       requiredLevel: 7,
       gatherTime: 7,
-      energyCost: 14,
+      goldCost: 14,
       xpReward: 25,
       dropTable: {
         leather: { chance: 1.0, quantity: [3, 6] },
@@ -227,7 +227,7 @@ async function seedGatherNodes() {
       type: 'leather' as any,
       requiredLevel: 15,
       gatherTime: 12,
-      energyCost: 25,
+      goldCost: 25,
       xpReward: 60,
       dropTable: {
         dragon_scale: { chance: 0.8, quantity: [1, 3] },

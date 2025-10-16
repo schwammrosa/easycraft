@@ -177,16 +177,17 @@ export function Inventory() {
                           </p>
                           {equipped.inventory.item.attributes && (
                             <div className="mt-2 flex gap-2 flex-wrap">
-                              {Object.entries(equipped.inventory.item.attributes as Record<string, any>).map(
-                                ([key, value]) => (
+                              {Object.entries(equipped.inventory.item.attributes as Record<string, any>)
+                                .filter(([key]) => isNaN(Number(key))) // Ignora índices numéricos
+                                .map(([key, value]) => (
                                   <span
                                     key={key}
                                     className="text-xs px-2 py-1 bg-accent-green/20 text-accent-green rounded"
                                   >
                                     +{value as number} {key.toUpperCase()}
                                   </span>
-                                )
-                              )}
+                                ))
+                              }
                             </div>
                           )}
                         </div>
@@ -338,16 +339,17 @@ export function Inventory() {
                 <div className="mb-4">
                   <h4 className="font-semibold mb-2">Atributos:</h4>
                   <div className="flex gap-2 flex-wrap">
-                    {Object.entries(selectedItem.item.attributes as Record<string, any>).map(
-                      ([key, value]) => (
+                    {Object.entries(selectedItem.item.attributes as Record<string, any>)
+                      .filter(([key]) => isNaN(Number(key))) // Ignora índices numéricos
+                      .map(([key, value]) => (
                         <span
                           key={key}
                           className="px-3 py-1 bg-accent-green/20 text-accent-green rounded text-sm"
                         >
                           +{value as number} {key.toUpperCase()}
                         </span>
-                      )
-                    )}
+                      ))
+                    }
                   </div>
                 </div>
               )}

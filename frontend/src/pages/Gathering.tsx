@@ -2,19 +2,21 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gatheringService, GatherNode, GatherSession } from '../services/gathering.service';
 import { characterService } from '../services/character.service';
+import { useCharacterStore } from '../store/characterStore';
 import { PageLayout } from '../components/layout/PageLayout';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 
 export function Gathering() {
   const navigate = useNavigate();
-  const [character, setCharacter] = useState<any>(null);
+  const { selectedCharacter, selectCharacter } = useCharacterStore();
+  const character = selectedCharacter;
   const [nodes, setNodes] = useState<GatherNode[]>([]);
   const [activeSession, setActiveSession] = useState<GatherSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedNode, setSelectedNode] = useState<GatherNode | null>(null);
   const [maxGathers, setMaxGathers] = useState(10);
-  const [activeTab, setActiveTab] = useState<'nodes' | 'history'>('nodes');
+  const [activeTab, setActiveTab] = useState<'config' | 'history'>('config');
   const [history, setHistory] = useState<GatherSession[]>([]);
 
   useEffect(() => {
@@ -33,27 +35,26 @@ export function Gathering() {
   }, [activeSession]);
 
   const loadData = async () => {
+    if (!character) {
+      navigate('/characters');
+      return;
+    }
+
     try {
       setLoading(true);
-      const chars = await characterService.getCharacters();
-      if (chars.length === 0) {
-        navigate('/characters');
-        return;
-      }
-
-      const char = chars[0];
-      setCharacter(char);
 
       const [nodesData, activeSessionData, historyData] = await Promise.all([
-        gatheringService.getGatherNodes(char.id),
-        gatheringService.getActiveGatherSession(char.id),
-        gatheringService.getGatherHistory(char.id, 10),
+        gatheringService.getGatherNodes(character.id),
+        gatheringService.getActiveGatherSession(character.id),
+        gatheringService.getGatherHistory(character.id, 10),
       ]);
 
+      console.log('📦 Nodos carregados:', nodesData);
       setNodes(nodesData);
       setActiveSession(activeSessionData);
       setHistory(historyData);
     } catch (err: any) {
+      console.error('❌ Erro ao carregar gathering:', err);
       setError(err.response?.data?.error?.message || 'Erro ao carregar dados');
     } finally {
       setLoading(false);
@@ -68,11 +69,9 @@ export function Gathering() {
       setActiveSession(session);
 
       // If session ended, reload character and history
-      if (session.status !== 'running') {
-        const chars = await characterService.getCharacters();
-        if (chars.length > 0) {
-          setCharacter(chars[0]);
-        }
+      if (session.status !== 'running' && character) {
+        const updated = await characterService.getCharacter(character.id);
+        selectCharacter(updated);
         const historyData = await gatheringService.getGatherHistory(character.id, 10);
         setHistory(historyData);
       }
@@ -102,16 +101,17 @@ export function Gathering() {
   const handleCancelSession = async () => {
     if (!activeSession || !character) return;
 
-    if (confirm('⚠️ ATENÇÃO: Cancelar a coleta resultará em perda de 30% da XP acumulada. Deseja continuar?')) {
+    if (confirm('⚠️ ATENÇÃO: Cancelar a coleta resultará em:\n- Perda de 50% da XP acumulada\n- Perda de 50% dos itens coletados\n+ Reembolso de 50% do gold gasto\n\nDeseja continuar?')) {
       try {
         await gatheringService.cancelGatherSession(character.id, activeSession.id);
         const session = await gatheringService.getGatherSessionStatus(activeSession.id);
         setActiveSession(session);
+        setSelectedNode(null);
 
-        // Reload character
-        const chars = await characterService.getCharacters();
-        if (chars.length > 0) {
-          setCharacter(chars[0]);
+        // Reload character to update gold
+        if (character) {
+          const updated = await characterService.getCharacter(character.id);
+          selectCharacter(updated);
         }
       } catch (err: any) {
         setError(err.response?.data?.error?.message || 'Erro ao cancelar coleta');
@@ -223,8 +223,8 @@ export function Gathering() {
                 <p className="text-lg font-bold text-accent-green">{activeSession.successfulGathers}</p>
               </div>
               <div className="bg-bg-panel rounded-lg p-3">
-                <p className="text-xs text-text-secondary">Energia Usada</p>
-                <p className="text-lg font-bold text-accent-gold">{activeSession.energyUsed}</p>
+                <p className="text-xs text-text-secondary">Gold Gasto</p>
+                <p className="text-lg font-bold text-accent-gold">{activeSession.goldSpent}g</p>
               </div>
               <div className="bg-bg-panel rounded-lg p-3">
                 <p className="text-xs text-text-secondary">Níveis</p>
@@ -266,7 +266,7 @@ export function Gathering() {
                   onClick={handleCancelSession}
                   className="flex-1 py-3 bg-accent-red hover:bg-accent-red/80 rounded-lg font-semibold"
                 >
-                  ⚠️ Cancelar Coleta (-30% XP)
+                  ⚠️ Cancelar Coleta (-50% XP/-50% Items/+50% Gold)
                 </button>
               )}
               {activeSession.status !== 'running' && (
@@ -284,23 +284,24 @@ export function Gathering() {
           </div>
         )}
 
-        {/* Tabs */}
+        {/* Configuration Panel with Tabs */}
         {!activeSession && (
-          <div className="mb-6">
-            <div className="flex gap-4 border-b border-primary-medium">
+          <div className="bg-bg-panel rounded-lg p-6">
+            {/* Tabs */}
+            <div className="flex gap-2 mb-6 border-b border-primary-medium">
               <button
-                onClick={() => setActiveTab('nodes')}
-                className={`px-6 py-3 font-semibold ${
-                  activeTab === 'nodes'
+                onClick={() => setActiveTab('config')}
+                className={`px-6 py-3 font-semibold transition-all ${
+                  activeTab === 'config'
                     ? 'text-accent-gold border-b-2 border-accent-gold'
                     : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
-                🌲 Nodos de Coleta
+                🌲 Configuração de Coleta
               </button>
               <button
                 onClick={() => setActiveTab('history')}
-                className={`px-6 py-3 font-semibold ${
+                className={`px-6 py-3 font-semibold transition-all ${
                   activeTab === 'history'
                     ? 'text-accent-gold border-b-2 border-accent-gold'
                     : 'text-text-secondary hover:text-text-primary'
@@ -309,88 +310,159 @@ export function Gathering() {
                 📜 Histórico
               </button>
             </div>
-          </div>
-        )}
 
-        {/* Nodes List */}
-        {!activeSession && activeTab === 'nodes' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {nodes.map((node) => {
-              const canGather = character && character.level >= node.requiredLevel;
+            {/* Configuration Tab */}
+            {activeTab === 'config' && (
+              <div>
+                {/* Alert if no nodes */}
+                {nodes.length === 0 && (
+                  <div className="mb-6 p-4 bg-accent-red/20 border border-accent-red rounded-lg">
+                    <p className="text-accent-red font-semibold mb-2">⚠️ Nenhum nodo de coleta encontrado!</p>
+                    <p className="text-sm text-text-secondary">
+                      Verifique se o backend está rodando e se os nodos foram criados no banco de dados.
+                    </p>
+                    <p className="text-xs text-text-secondary mt-2">
+                      Execute: <code className="bg-primary-dark px-2 py-1 rounded">npx prisma db seed</code>
+                    </p>
+                  </div>
+                )}
 
-              return (
-                <div
-                  key={node.id}
-                  className={`bg-bg-panel rounded-lg p-6 border-2 transition-all ${
-                    canGather
-                      ? 'border-primary-medium hover:border-accent-blue cursor-pointer'
-                      : 'border-primary-dark opacity-60'
-                  }`}
-                  onClick={() => canGather && setSelectedNode(node)}
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="text-xl font-bold flex items-center gap-2">
-                        <span className="text-2xl">{getNodeTypeIcon(node.type)}</span>
-                        {node.name}
-                      </h3>
-                      <p className={`text-sm ${getNodeTypeColor(node.type)}`}>
-                        {node.type.toUpperCase()}
-                      </p>
-                    </div>
-                    {!canGather && (
-                      <span className="bg-accent-red/20 text-accent-red text-xs px-2 py-1 rounded">
-                        🔒 Nv.{node.requiredLevel}
-                      </span>
-                    )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Node Selection */}
+                  <div>
+                    <label className="block text-sm font-semibold mb-2 text-white">1. Escolha o Recurso:</label>
+                    <select
+                      value={selectedNode?.code || ''}
+                      onChange={(e) => {
+                        const node = nodes.find(n => n.code === e.target.value);
+                        setSelectedNode(node || null);
+                      }}
+                      className="w-full bg-bg-input border border-primary-medium rounded-lg px-4 py-3 focus:outline-none focus:border-accent-gold text-white"
+                    >
+                      <option value="">Selecione um recurso...</option>
+                      {nodes.map((node) => {
+                        const canGather = character && character.level >= node.requiredLevel;
+                        return (
+                          <option 
+                            key={node.code} 
+                            value={node.code}
+                            disabled={!canGather}
+                          >
+                            {!canGather ? '🔒 ' : ''}{getNodeTypeIcon(node.type)} {node.name} (Nv {node.requiredLevel}) - {node.goldCost}g/coleta
+                          </option>
+                        );
+                      })}
+                    </select>
                   </div>
 
-                  {node.description && (
-                    <p className="text-sm text-text-secondary mb-4">{node.description}</p>
+                  {/* Max Gathers */}
+                  <div>
+                    <label className="block text-sm font-semibold mb-2 text-white">
+                      2. Quantas coletas? (1-100)
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={maxGathers}
+                      onChange={(e) => setMaxGathers(Math.min(100, Math.max(1, parseInt(e.target.value) || 1)))}
+                      className="w-full bg-bg-input border border-primary-medium rounded-lg px-4 py-3 focus:outline-none focus:border-accent-gold text-white"
+                    />
+                    <p className="text-xs text-text-secondary mt-1">
+                      Tempo estimado: ~{selectedNode ? Math.ceil((maxGathers * selectedNode.gatherTime) / 60) : 0} minutos
+                    </p>
+                  </div>
+
+                  {/* Selected Node Info */}
+                  {selectedNode && (
+                    <div className="md:col-span-2">
+                      <div className="p-4 bg-primary-dark/50 rounded-lg border border-primary-medium">
+                        <div className="flex items-center gap-3 mb-3">
+                          <span className="text-4xl">{getNodeTypeIcon(selectedNode.type)}</span>
+                          <div>
+                            <h3 className="text-lg font-bold">{selectedNode.name}</h3>
+                            <p className={`text-sm ${getNodeTypeColor(selectedNode.type)}`}>
+                              {selectedNode.type.toUpperCase()}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm mb-3">
+                          <div>
+                            <p className="text-text-secondary">Tempo/Coleta:</p>
+                            <p className="font-bold">{selectedNode.gatherTime}s</p>
+                          </div>
+                          <div>
+                            <p className="text-text-secondary">XP/Coleta:</p>
+                            <p className="font-bold text-accent-blue">+{selectedNode.xpReward}</p>
+                          </div>
+                          <div>
+                            <p className="text-text-secondary">Gold/Coleta:</p>
+                            <p className="font-bold text-accent-gold">{selectedNode.goldCost}g</p>
+                          </div>
+                          <div>
+                            <p className="text-text-secondary">Nível Req.:</p>
+                            <p className="font-bold">Nv.{selectedNode.requiredLevel}</p>
+                          </div>
+                        </div>
+
+                        {/* Total Cost */}
+                        <div className="mt-3 p-3 bg-accent-gold/10 border-2 border-accent-gold rounded-lg">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <p className="text-sm font-medium text-accent-gold">💰 Custo Total</p>
+                              <p className="text-xs text-text-secondary">Será cobrado antes de iniciar</p>
+                            </div>
+                            <p className="text-2xl font-bold text-accent-gold">
+                              {maxGathers * selectedNode.goldCost}g
+                            </p>
+                          </div>
+                          <div className="mt-2 flex justify-between text-xs">
+                            <span className="text-text-secondary">Seu Gold:</span>
+                            <span className={character && character.gold >= (maxGathers * selectedNode.goldCost) ? 'text-accent-green font-bold' : 'text-accent-red font-bold'}>
+                              {character?.gold || 0}g {character && character.gold < (maxGathers * selectedNode.goldCost) && '⚠️ Insuficiente!'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   )}
-
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <p className="text-text-secondary">Tempo</p>
-                      <p className="font-bold">{node.gatherTime}s</p>
-                    </div>
-                    <div>
-                      <p className="text-text-secondary">Energia</p>
-                      <p className="font-bold text-accent-gold">{node.energyCost}</p>
-                    </div>
-                    <div>
-                      <p className="text-text-secondary">XP</p>
-                      <p className="font-bold text-accent-blue">+{node.xpReward}</p>
-                    </div>
-                    <div>
-                      <p className="text-text-secondary">Nível Req.</p>
-                      <p className="font-bold">Nv.{node.requiredLevel}</p>
-                    </div>
-                  </div>
-
-                  {/* Drop Table */}
-                  <div className="mt-4 pt-4 border-t border-primary-medium">
-                    <p className="text-xs text-text-secondary mb-2">Recursos Disponíveis:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {Object.keys(node.dropTable).map((itemCode) => (
-                        <span
-                          key={itemCode}
-                          className="text-xs bg-primary-medium px-2 py-1 rounded"
-                        >
-                          {itemCode}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
 
-        {/* History */}
-        {!activeSession && activeTab === 'history' && (
-          <div className="space-y-4">
+                {/* Info Box */}
+                <div className="mt-6 p-4 bg-accent-blue/10 border border-accent-blue rounded-lg">
+                  <p className="text-sm mb-2 text-white">📋 <strong>Como funciona:</strong></p>
+                  <ul className="text-sm text-white space-y-1 ml-4">
+                    <li>• Selecione um nodo de recurso acima</li>
+                    <li>• O jogo vai coletar automaticamente os recursos</li>
+                    <li>• Custo em gold é cobrado ANTES de iniciar</li>
+                    <li>• Você pode navegar livremente durante a coleta</li>
+                    <li>• Cancelar perde 50% XP + 50% items, mas reembolsa 50% do gold</li>
+                    <li>• Todos XP, Gold e Items são coletados automaticamente</li>
+                  </ul>
+                </div>
+
+                {/* Error Message */}
+                {error && (
+                  <div className="mt-4 p-3 bg-accent-red/20 border border-accent-red rounded-lg text-sm text-accent-red">
+                    {error}
+                  </div>
+                )}
+
+                {/* Start Button */}
+                <button
+                  onClick={handleStartGathering}
+                  disabled={!selectedNode || !character || character.gold < (maxGathers * (selectedNode?.goldCost || 0))}
+                  className="w-full mt-6 py-4 bg-accent-gold hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-bold text-lg transition-colors"
+                >
+                  🌲 INICIAR COLETA!
+                </button>
+              </div>
+            )}
+
+            {/* History Tab */}
+            {activeTab === 'history' && (
+              <div className="space-y-4">
             {history.length === 0 ? (
               <div className="text-center py-12 text-text-secondary">
                 <p className="text-4xl mb-4">📜</p>
@@ -418,77 +490,72 @@ export function Gathering() {
                       </span>
                     </div>
                   </div>
-                  <div className="grid grid-cols-4 gap-4 text-sm">
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-4 gap-4 text-sm mb-4">
                     <div>
                       <span className="text-text-secondary">Coletas:</span>
                       <p className="font-semibold">{session.successfulGathers}/{session.maxGathers}</p>
                     </div>
                     <div>
-                      <span className="text-text-secondary">XP:</span>
+                      <span className="text-text-secondary">XP Ganha:</span>
                       <p className="font-semibold text-accent-blue">+{session.totalXpGained}</p>
                     </div>
                     <div>
-                      <span className="text-text-secondary">Energia:</span>
-                      <p className="font-semibold text-accent-gold">{session.energyUsed}</p>
+                      <span className="text-text-secondary">Gold Gasto:</span>
+                      <p className="font-semibold text-accent-red">{session.goldSpent}g</p>
                     </div>
                     <div>
-                      <span className="text-text-secondary">Items:</span>
-                      <p className="font-semibold text-accent-green">{session.totalItemsGathered.length}</p>
+                      <span className="text-text-secondary">Levels:</span>
+                      <p className="font-semibold text-accent-green">
+                        {session.levelsGained > 0 ? `+${session.levelsGained}` : '-'}
+                      </p>
                     </div>
                   </div>
+
+                  {/* Gold Refunded (if cancelled) */}
+                  {session.status === 'cancelled' && session.goldRefunded > 0 && (
+                    <div className="mb-4 p-3 bg-accent-gold/10 border border-accent-gold rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-accent-gold">💰 Reembolso:</span>
+                        <span className="text-lg font-bold text-accent-gold">+{session.goldRefunded}g</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Items Collected */}
+                  {session.totalItemsGathered && session.totalItemsGathered.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-sm text-text-secondary mb-2">Items Coletados:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {session.totalItemsGathered.map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="px-3 py-1 bg-primary-medium rounded-lg text-sm"
+                          >
+                            <span className="text-accent-green font-semibold">{item.quantity}x</span>
+                            {' '}
+                            <span className="text-text-primary">{item.itemCode}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Stopped Message */}
+                  {session.stoppedMessage && (
+                    <div className={`p-3 rounded-lg text-sm ${
+                      session.status === 'completed' ? 'bg-accent-green/20 border border-accent-green text-accent-green' :
+                      session.status === 'cancelled' ? 'bg-accent-red/20 border border-accent-red text-accent-red' :
+                      'bg-accent-blue/20 border border-accent-blue text-accent-blue'
+                    }`}>
+                      <p className="whitespace-pre-line">{session.stoppedMessage}</p>
+                    </div>
+                  )}
                 </div>
               ))
             )}
-          </div>
-        )}
-
-        {/* Start Gathering Modal */}
-        {selectedNode && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
-            <div className="bg-bg-panel rounded-lg p-8 max-w-md w-full">
-              <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                <span className="text-3xl">{getNodeTypeIcon(selectedNode.type)}</span>
-                {selectedNode.name}
-              </h2>
-
-              <div className="mb-6">
-                <label className="block text-sm font-medium mb-2">
-                  Quantas coletas? (1-100)
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  max="100"
-                  value={maxGathers}
-                  onChange={(e) => setMaxGathers(Math.min(100, Math.max(1, parseInt(e.target.value) || 1)))}
-                  className="w-full px-4 py-2 bg-bg-input rounded-lg border border-primary-medium focus:border-accent-blue focus:outline-none"
-                />
-                <p className="text-xs text-text-secondary mt-1">
-                  Tempo estimado: ~{(maxGathers * selectedNode.gatherTime) / 60} minutos
-                </p>
               </div>
-
-              {error && (
-                <div className="mb-4 p-3 bg-accent-red/20 border border-accent-red rounded-lg text-sm text-accent-red">
-                  {error}
-                </div>
-              )}
-
-              <div className="flex gap-4">
-                <button
-                  onClick={() => setSelectedNode(null)}
-                  className="flex-1 py-3 bg-primary-dark hover:bg-primary-medium rounded-lg font-semibold"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleStartGathering}
-                  className="flex-1 py-3 bg-accent-green hover:bg-opacity-80 rounded-lg font-semibold"
-                >
-                  🌲 Iniciar Coleta
-                </button>
-              </div>
-            </div>
+            )}
           </div>
         )}
       </div>

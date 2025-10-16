@@ -397,6 +397,20 @@ export class BattleService {
     return session;
   }
 
+  async getFarmHistory(characterId: number, limit: number = 10): Promise<any[]> {
+    const sessions = await prisma.farmSession.findMany({
+      where: {
+        characterId
+      },
+      orderBy: {
+        startedAt: 'desc'
+      },
+      take: limit
+    });
+
+    return sessions;
+  }
+
   // Keep old sync method for backwards compatibility (deprecated)
   async startFarmMode(characterId: number, config: FarmModeConfig): Promise<any> {
     // Just redirect to async version

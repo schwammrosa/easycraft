@@ -570,7 +570,7 @@ model GatherNode {
   type              GatherNodeType
   requiredLevel     Int             @default(1) @map("required_level")
   gatherTime        Int             @default(5) @map("gather_time") // seconds per gather
-  energyCost        Int             @default(10) @map("energy_cost") // energy per gather
+  goldCost          Int             @default(10) @map("gold_cost") // gold per gather
   xpReward          Int             @map("xp_reward")
   
   // Drop table: { itemCode: string, chance: number, quantity: [min, max] }
@@ -605,8 +605,9 @@ model GatherSession {
   startLevel            Int                   @map("start_level")
   endLevel              Int                   @map("end_level")
   
-  // Energy tracking
-  energyUsed            Int                   @default(0) @map("energy_used")
+  // Gold tracking
+  goldSpent             Int                   @default(0) @map("gold_spent")
+  goldRefunded          Int                   @default(0) @map("gold_refunded")
   
   // Stop reason
   stoppedReason         String?               @map("stopped_reason")
