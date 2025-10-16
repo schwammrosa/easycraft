@@ -9,6 +9,7 @@ import { AnimatedNumber } from '../components/AnimatedNumber';
 import { WelcomeTutorial } from '../components/Tutorial';
 import { useToastContext } from '../components/ToastProvider';
 import { StatsDistribution } from '../components/StatsDistribution';
+import { DetailedStats } from '../components/DetailedStats';
 import { PageLayout } from '../components/layout/PageLayout';
 import { Card, CardHeader, CardBody } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
@@ -21,6 +22,7 @@ export function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [showTutorial, setShowTutorial] = useState(false);
   const [showStatsModal, setShowStatsModal] = useState(false);
+  const [showDetailedStats, setShowDetailedStats] = useState(false);
   const toast = useToastContext();
 
   useEffect(() => {
@@ -190,6 +192,16 @@ export function Dashboard() {
                   </span>
                 )}
               </div>
+              <div className="mt-4 pt-4 border-t border-primary-medium">
+                <Button
+                  variant="primary"
+                  onClick={() => setShowDetailedStats(true)}
+                  fullWidth
+                  size="sm"
+                >
+                  📊 Ver Status Detalhado
+                </Button>
+              </div>
               </CardBody>
             </Card>
 
@@ -231,6 +243,13 @@ export function Dashboard() {
             selectCharacter(updated);
             toast.success('Pontos distribuídos com sucesso!');
           }}
+        />
+      )}
+
+      {showDetailedStats && selectedCharacter && (
+        <DetailedStats
+          character={selectedCharacter}
+          onClose={() => setShowDetailedStats(false)}
         />
       )}
     </PageLayout>

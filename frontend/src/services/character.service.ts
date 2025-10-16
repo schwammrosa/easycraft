@@ -1,6 +1,8 @@
 import { api } from './api';
 import { ApiResponse, Character, CreateCharacterDTO } from '../types';
 
+export type { Character };
+
 export const characterService = {
   async getCharacters(): Promise<Character[]> {
     const response = await api.get<ApiResponse<{ characters: Character[] }>>('/characters');

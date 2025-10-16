@@ -10,9 +10,9 @@ const prisma = new PrismaClient();
  * Similar ao sistema do Ragnarok Online
  */
 
-// HP base + (VIT * 10)
+// HP = (VIT × 10) + (level × 5)
 const HP_PER_VIT = 10;
-const BASE_HP = 50;
+const HP_PER_LEVEL = 5;
 
 // Pontos ganhos por level up
 const STAT_POINTS_PER_LEVEL = 3;
@@ -20,10 +20,11 @@ const STAT_POINTS_PER_LEVEL = 3;
 export class CharacterStatsService {
   
   /**
-   * Calcula HP máximo baseado em VIT
+   * Calcula HP máximo baseado em VIT e Level
+   * Fórmula: HP = (VIT × 10) + (level × 5)
    */
-  calculateMaxHP(vit: number): number {
-    return BASE_HP + (vit * HP_PER_VIT);
+  calculateMaxHP(vit: number, level: number): number {
+    return (vit * HP_PER_VIT) + (level * HP_PER_LEVEL);
   }
 
   /**
@@ -80,8 +81,8 @@ export class CharacterStatsService {
 
     // Se VIT mudou, recalcular maxHP
     if (points.vit && points.vit > 0) {
-      const newMaxHP = this.calculateMaxHP(newVit);
       const character = stats.character;
+      const newMaxHP = this.calculateMaxHP(newVit, character.level);
       
       // Aumenta HP proporcional ao aumento de maxHP
       const hpIncrease = HP_PER_VIT * (points.vit || 0);
@@ -156,7 +157,7 @@ export class CharacterStatsService {
     await inventoryService['recalculateStats'](characterId);
 
     // Resetar HP para base
-    const baseMaxHP = this.calculateMaxHP(INITIAL_STATS);
+    const baseMaxHP = this.calculateMaxHP(INITIAL_STATS, character.level);
     await prisma.character.update({
       where: { id: characterId },
       data: {

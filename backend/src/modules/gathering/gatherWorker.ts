@@ -197,6 +197,25 @@ class GatherWorker {
       const levelsGained = newLevel - oldLevel;
       const statPointsGained = levelsGained * 3; // 3 pontos por level
       
+      // Get current stats to recalculate maxHP
+      const stats = await prisma.characterStats.findUnique({
+        where: { characterId },
+      });
+
+      if (stats) {
+        // Recalculate maxHP: HP = (VIT × 10) + (level × 5)
+        const newMaxHP = (stats.totalVit * 10) + (newLevel * 5);
+        const hpIncrease = levelsGained * 5; // +5 HP por level
+
+        await prisma.character.update({
+          where: { id: characterId },
+          data: {
+            maxHp: newMaxHP,
+            hp: { increment: hpIncrease }, // Aumenta HP também
+          },
+        });
+      }
+      
       await prisma.characterStats.update({
         where: { characterId },
         data: {

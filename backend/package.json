@@ -14,6 +14,7 @@
     "test:coverage": "jest --coverage",
     "test:stats": "ts-node prisma/test-stats-calculation.ts",
     "fix:characters": "ts-node prisma/fix-characters-hp-and-stats.ts",
+    "fix:hp": "ts-node prisma/fix-character-hp.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "ts-node prisma/seed.ts",

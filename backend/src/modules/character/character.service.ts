@@ -7,7 +7,8 @@ const MAX_CHARACTERS_PER_USER = 3;
 const INITIAL_STAT_VALUE = 5;
 const INITIAL_DEFENSE = 2;
 const INITIAL_GOLD = 100;
-const INITIAL_HP = 50;
+// HP = (VIT × 10) + (level × 5) = (5 × 10) + (1 × 5) = 55
+const INITIAL_HP = 55;
 
 export class CharacterService {
   async getCharactersByUserId(userId: number): Promise<CharacterResponse[]> {
