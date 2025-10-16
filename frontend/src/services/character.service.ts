@@ -20,4 +20,17 @@ export const characterService = {
   async deleteCharacter(id: number): Promise<void> {
     await api.delete(`/characters/${id}`);
   },
+
+  async distributeStats(characterId: number, points: { str?: number; agi?: number; vit?: number; int?: number }): Promise<void> {
+    await api.post(`/characters/${characterId}/stats/distribute`, points);
+  },
+
+  async resetStats(characterId: number): Promise<void> {
+    await api.post(`/characters/${characterId}/stats/reset`);
+  },
+
+  async getResetCost(characterId: number): Promise<number> {
+    const response = await api.get<ApiResponse<{ cost: number }>>(`/characters/${characterId}/stats/reset-cost`);
+    return response.data.data!.cost;
+  },
 };

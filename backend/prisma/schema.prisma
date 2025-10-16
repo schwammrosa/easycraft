@@ -82,6 +82,9 @@ model CharacterStats {
   int           Int       @default(5)
   def           Int       @default(2)
   
+  // Stat points available to distribute
+  statPoints    Int       @default(0) @map("stat_points")
+  
   // Total stats (base + equipment)
   totalStr      Int       @default(5) @map("total_str")
   totalAgi      Int       @default(5) @map("total_agi")

@@ -95,12 +95,13 @@ export class BattleService {
 
       // Level up bonuses
       if (leveledUp) {
-        const statPointsGained = (newLevel - character.level) * 2;
+        const levelsGained = newLevel - character.level;
+        const statPointsGained = levelsGained * 3; // 3 pontos por level
+        
         await prisma.characterStats.update({
           where: { characterId },
           data: {
-            str: { increment: statPointsGained },
-            totalStr: { increment: statPointsGained },
+            statPoints: { increment: statPointsGained }
           },
         });
 

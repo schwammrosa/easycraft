@@ -43,6 +43,7 @@ export interface CharacterStats {
   vit: number;
   int: number;
   def: number;
+  statPoints: number;
   totalStr: number;
   totalAgi: number;
   totalVit: number;

@@ -9,6 +9,7 @@ import { Tooltip, StatTooltip } from '../components/Tooltip';
 import { AnimatedNumber } from '../components/AnimatedNumber';
 import { WelcomeTutorial } from '../components/Tutorial';
 import { useToastContext } from '../components/ToastProvider';
+import { StatsDistribution } from '../components/StatsDistribution';
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export function Dashboard() {
   const logout = useAuthStore((state) => state.logout);
   const [loading, setLoading] = useState(true);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [showStatsModal, setShowStatsModal] = useState(false);
   const toast = useToastContext();
 
   useEffect(() => {
@@ -99,6 +101,24 @@ export function Dashboard() {
             </div>
             <h2 className="text-2xl font-bold text-accent-gold">{selectedCharacter.name}</h2>
             <p className="text-text-secondary">Nível {selectedCharacter.level}</p>
+            
+            {/* Alerta de Pontos Disponíveis */}
+            {selectedCharacter.stats.statPoints > 0 && (
+              <div className="mt-4 bg-accent-gold/20 border-2 border-accent-gold rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-accent-gold font-bold text-lg">⚠️ Pontos de Atributo Disponíveis!</p>
+                    <p className="text-sm text-gray-300">Você tem {selectedCharacter.stats.statPoints} pontos para distribuir</p>
+                  </div>
+                  <button
+                    onClick={() => setShowStatsModal(true)}
+                    className="bg-accent-gold hover:bg-yellow-600 text-gray-900 font-bold py-2 px-6 rounded transition-colors"
+                  >
+                    Distribuir Agora
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -259,7 +279,21 @@ export function Dashboard() {
       </div>
 
       {/* Tutorial */}
-      {showTutorial && <WelcomeTutorial onComplete={handleTutorialComplete} />}
+      {showTutorial && (
+        <WelcomeTutorial onComplete={() => setShowTutorial(false)} />
+      )}
+      
+      {showStatsModal && selectedCharacter && (
+        <StatsDistribution
+          character={selectedCharacter}
+          onClose={() => setShowStatsModal(false)}
+          onSuccess={async () => {
+            const updated = await characterService.getCharacter(selectedCharacter.id);
+            selectCharacter(updated);
+            toast.success('Pontos distribuídos com sucesso!');
+          }}
+        />
+      )}
     </div>
   );
 }

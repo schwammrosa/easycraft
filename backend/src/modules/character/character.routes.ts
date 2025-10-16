@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { characterController } from './character.controller';
+import { characterStatsController } from './character-stats.controller';
 import { authenticate } from '../../middleware/authenticate';
 
 const router = Router();
@@ -34,5 +35,26 @@ router.get('/:id', (req, res) => characterController.getCharacter(req, res));
  * @access  Private
  */
 router.delete('/:id', (req, res) => characterController.deleteCharacter(req, res));
+
+/**
+ * @route   POST /api/characters/:characterId/stats/distribute
+ * @desc    Distribute stat points
+ * @access  Private
+ */
+router.post('/:characterId/stats/distribute', (req, res) => characterStatsController.distributeStats(req, res));
+
+/**
+ * @route   POST /api/characters/:characterId/stats/reset
+ * @desc    Reset character stats
+ * @access  Private
+ */
+router.post('/:characterId/stats/reset', (req, res) => characterStatsController.resetStats(req, res));
+
+/**
+ * @route   GET /api/characters/:characterId/stats/reset-cost
+ * @desc    Get cost to reset stats
+ * @access  Private
+ */
+router.get('/:characterId/stats/reset-cost', (req, res) => characterStatsController.getResetCost(req, res));
 
 export default router;

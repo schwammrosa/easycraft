@@ -303,12 +303,13 @@ class FarmWorker {
 
     // Level up bonuses
     if (leveledUp) {
-      const statPointsGained = (newLevel - oldLevel) * 2;
+      const levelsGained = newLevel - oldLevel;
+      const statPointsGained = levelsGained * 3; // 3 pontos por level
+      
       await prisma.characterStats.update({
         where: { characterId },
         data: {
-          str: { increment: statPointsGained },
-          totalStr: { increment: statPointsGained },
+          statPoints: { increment: statPointsGained }
         },
       });
 
@@ -316,12 +317,12 @@ class FarmWorker {
       await prisma.farmSession.update({
         where: { id: sessionId },
         data: {
-          levelsGained: { increment: (newLevel - oldLevel) },
+          levelsGained: { increment: levelsGained },
           endLevel: newLevel,
         }
       });
 
-      logger.info(`Session ${sessionId}: Character leveled up ${oldLevel} → ${newLevel}`);
+      logger.info(`Session ${sessionId}: Character leveled up ${oldLevel} → ${newLevel} (+${statPointsGained} stat points)`);
     }
 
     // Give dropped items
