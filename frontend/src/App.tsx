@@ -6,6 +6,7 @@ import { CharacterCreation } from './pages/CharacterCreation';
 import { Dashboard } from './pages/Dashboard';
 import { Inventory } from './pages/Inventory';
 import { Battle } from './pages/Battle';
+import { BattleFarm } from './pages/BattleFarm';
 import { Quests } from './pages/Quests';
 import { Crafting } from './pages/Crafting';
 import { Marketplace } from './pages/Marketplace';
@@ -63,6 +64,15 @@ function App() {
           element={
             <PrivateRoute>
               <Battle />
+            </PrivateRoute>
+          }
+        />
+        
+        <Route
+          path="/battle/farm"
+          element={
+            <PrivateRoute>
+              <BattleFarm />
             </PrivateRoute>
           }
         />

@@ -36,6 +36,16 @@
 - [x] Loot aleatório
 - [x] Ganho de XP e Gold
 - [x] Sistema de descanso (recuperar HP)
+- [x] **🔥 FARM MODE - Batalha Automática Assíncrona**
+  - [x] Processamento em background (3s entre batalhas)
+  - [x] Uso automático de poções por % de HP
+  - [x] Progresso em tempo real (polling 2s)
+  - [x] Navegação livre durante farm
+  - [x] Sistema de fuga com penalidade 50%
+  - [x] Múltiplas condições de parada
+  - [x] Apenas 1 farm ativo por personagem
+  - [x] Acumulação de XP, Gold e itens
+  - [x] Status e reasons diferenciados
 
 ### ✅ Sistema de Inventário
 - [x] Listagem de itens

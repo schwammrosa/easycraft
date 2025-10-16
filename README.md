@@ -25,6 +25,7 @@ EasyCraft é um MMORPG web minimalista que foca em mecânicas de progressão, si
 ### 🎯 Principais Características
 
 - ⚔️ **Combate Automático**: Estratégia na preparação, não em reflexos
+- 🔥 **Farm Mode Assíncrono**: Farme XP/Gold em background enquanto faz outras coisas
 - 🎨 **Personalização por Camadas**: Customize seu avatar com diferentes partes
 - 💰 **Economia Dinâmica**: Mercado entre jogadores + NPCs reguladores
 - 🛠️ **Sistema de Craft**: Transforme materiais em itens valiosos
@@ -48,7 +49,8 @@ EasyCraft é um MMORPG web minimalista que foca em mecânicas de progressão, si
 - [x] Sistema de Crafting (24 receitas)
 - [x] Uso de Itens Consumíveis (Poções)
 - [x] Marketplace entre jogadores (Economia)
-- [x] **Sistema de Dungeons (Conteúdo Endgame)** ⭐ **NOVO**
+- [x] Sistema de Dungeons (Conteúdo Endgame)
+- [x] **🔥 Farm Mode - Batalha Automática Assíncrona** ⭐ **NOVO**
 
 ### Fase 2 - Expansão
 - [ ] Mais dungeons (5-10 total)
@@ -228,6 +230,8 @@ easycraft/
 
 ### **Documentação**
 - 📊 [Status Atual do Projeto](docs/STATUS_ATUAL.md)
+- 🔥 [Farm Mode - Sistema de Batalha Automática](docs/FARM_MODE.md) ⭐ **NOVO**
+- 🧪 [Testes de Status do Farm](docs/FARM_STATUS_TEST.md)
 - 🚀 [Guia Completo de Deploy](DEPLOY_SUCESSO.md)
 - 🎯 [Próximos Passos Imediatos](docs/PROXIMOS_PASSOS_IMEDIATOS.md)
 - 📋 [Roadmap Completo](PROXIMOS_PASSOS.md)

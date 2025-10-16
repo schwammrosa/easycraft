@@ -1,7 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import { BattleResult, BattleTurn, StartBattleDTO, DropResult, BattleStats } from './battle.types';
+import { BattleResult, BattleTurn, StartBattleDTO, DropResult, BattleStats, FarmModeConfig } from './battle.types';
 import { inventoryService } from '../inventory/inventory.service';
 import { questService } from '../quest/quest.service';
+import { logger } from '../../config/logger';
 
 const prisma = new PrismaClient();
 
@@ -238,6 +239,155 @@ export class BattleService {
 
     return drops;
   }
+
+  async startFarmModeAsync(characterId: number, config: FarmModeConfig): Promise<{ sessionId: number }> {
+    logger.info(`Starting farm mode: Character ${characterId} vs ${config.enemyCode}`);
+
+    // Get character
+    const character = await prisma.character.findUnique({
+      where: { id: characterId },
+      include: { stats: true },
+    });
+
+    if (!character || !character.stats) {
+      throw new Error('Personagem não encontrado');
+    }
+
+    if (character.hp <= 0) {
+      throw new Error('Personagem está morto! Descanse para recuperar HP.');
+    }
+
+    // Get enemy
+    const enemy = await prisma.enemy.findUnique({
+      where: { code: config.enemyCode },
+    });
+
+    if (!enemy) {
+      throw new Error('Inimigo não encontrado');
+    }
+
+    // Check level requirement
+    if (enemy.level > character.level + 5) {
+      throw new Error('Inimigo muito forte! Suba de nível primeiro.');
+    }
+
+    // Check if there's already an active farm session
+    const existingSession = await prisma.farmSession.findFirst({
+      where: {
+        characterId,
+        status: 'running'
+      }
+    });
+
+    if (existingSession) {
+      throw new Error('Você já tem uma sessão de farm ativa!');
+    }
+
+    // Create farm session
+    const session = await prisma.farmSession.create({
+      data: {
+        characterId,
+        enemyCode: config.enemyCode,
+        enemyName: enemy.name,
+        potionItemCode: config.potionItemCode,
+        usePotionAtHpPercent: config.usePotionAtHpPercent || 50,
+        maxBattles: config.maxBattles || 100,
+        startLevel: character.level,
+        endLevel: character.level,
+        status: 'running',
+      },
+    });
+
+    // Start processing in background
+    const { farmWorker } = await import('./farmWorker');
+    farmWorker.startFarmSession(session.id);
+
+    logger.info(`Farm session ${session.id} created and started`);
+
+    return { sessionId: session.id };
+  }
+
+  async getFarmSessionStatus(sessionId: number): Promise<any> {
+    const session = await prisma.farmSession.findUnique({
+      where: { id: sessionId },
+      include: {
+        character: {
+          select: {
+            id: true,
+            name: true,
+            level: true,
+            hp: true,
+            maxHp: true,
+          }
+        }
+      }
+    });
+
+    if (!session) {
+      throw new Error('Sessão de farm não encontrada');
+    }
+
+    return session;
+  }
+
+  async cancelFarmSession(sessionId: number): Promise<void> {
+    const session = await prisma.farmSession.findUnique({
+      where: { id: sessionId }
+    });
+
+    if (!session) {
+      throw new Error('Sessão de farm não encontrada');
+    }
+
+    if (session.status !== 'running') {
+      throw new Error('Sessão de farm não está ativa');
+    }
+
+    // Cancel in worker
+    const { farmWorker } = await import('./farmWorker');
+    await farmWorker.cancelFarmSession(sessionId);
+
+    logger.info(`Farm session ${sessionId} cancelled`);
+  }
+
+  async getActiveFarmSession(characterId: number): Promise<any | null> {
+    const session = await prisma.farmSession.findFirst({
+      where: {
+        characterId,
+        status: 'running'
+      },
+      orderBy: {
+        startedAt: 'desc'
+      }
+    });
+
+    return session;
+  }
+
+  async getLatestFarmSession(characterId: number): Promise<any | null> {
+    const session = await prisma.farmSession.findFirst({
+      where: {
+        characterId
+      },
+      orderBy: {
+        startedAt: 'desc'
+      }
+    });
+
+    return session;
+  }
+
+  // Keep old sync method for backwards compatibility (deprecated)
+  async startFarmMode(characterId: number, config: FarmModeConfig): Promise<any> {
+    // Just redirect to async version
+    const result = await this.startFarmModeAsync(characterId, config);
+    
+    // Wait a bit and return current status
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    return this.getFarmSessionStatus(result.sessionId);
+  }
+
 
   async restCharacter(characterId: number): Promise<void> {
     const character = await prisma.character.findUnique({

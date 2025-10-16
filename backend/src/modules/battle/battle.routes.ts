@@ -28,4 +28,39 @@ router.post('/:characterId/start', (req, res) => battleController.startBattle(re
  */
 router.post('/:characterId/rest', (req, res) => battleController.rest(req, res));
 
+/**
+ * @route   POST /api/battle/:characterId/farm
+ * @desc    Start farm mode (auto battle with potion usage)
+ * @access  Private
+ */
+router.post('/:characterId/farm', (req, res) => battleController.startFarmMode(req, res));
+
+/**
+ * @route   GET /api/battle/farm/:sessionId/status
+ * @desc    Get farm session status
+ * @access  Private
+ */
+router.get('/farm/:sessionId/status', (req, res) => battleController.getFarmSessionStatus(req, res));
+
+/**
+ * @route   POST /api/battle/farm/:sessionId/cancel
+ * @desc    Cancel farm session
+ * @access  Private
+ */
+router.post('/farm/:sessionId/cancel', (req, res) => battleController.cancelFarmSession(req, res));
+
+/**
+ * @route   GET /api/battle/:characterId/farm/active
+ * @desc    Get active farm session for character
+ * @access  Private
+ */
+router.get('/:characterId/farm/active', (req, res) => battleController.getActiveFarmSession(req, res));
+
+/**
+ * @route   GET /api/battle/:characterId/farm/latest
+ * @desc    Get latest farm session for character (any status)
+ * @access  Private
+ */
+router.get('/:characterId/farm/latest', (req, res) => battleController.getLatestFarmSession(req, res));
+
 export default router;

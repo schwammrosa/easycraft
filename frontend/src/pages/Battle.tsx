@@ -97,6 +97,12 @@ export function Battle() {
             </p>
           </div>
           <div className="space-x-4">
+            <button
+              onClick={() => navigate('/battle/farm')}
+              className="px-4 py-2 bg-accent-gold hover:bg-opacity-80 rounded-lg font-semibold"
+            >
+              🔥 Farm Mode
+            </button>
             {selectedCharacter.hp < selectedCharacter.maxHp && (
               <button
                 onClick={handleRest}

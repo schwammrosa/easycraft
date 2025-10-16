@@ -65,6 +65,7 @@ model Character {
   salesTransactions   MarketplaceTransaction[] @relation("SellerTransactions")
   purchaseTransactions MarketplaceTransaction[] @relation("BuyerTransactions")
   dungeonRuns   DungeonRun[]
+  farmSessions  FarmSession[]
   
   @@map("characters")
   @@index([userId])
@@ -477,4 +478,63 @@ model DungeonRun {
   @@index([dungeonId])
   @@index([status])
   @@index([completedAt])
+}
+
+// =====================================================
+// FARM SESSIONS (Background Battle System)
+// =====================================================
+
+enum FarmSessionStatus {
+  running
+  completed
+  cancelled
+  error
+}
+
+model FarmSession {
+  id                    Int                 @id @default(autoincrement())
+  characterId           Int                 @map("character_id")
+  enemyCode             String              @map("enemy_code")
+  enemyName             String              @map("enemy_name")
+  potionItemCode        String?             @map("potion_item_code")
+  usePotionAtHpPercent  Int                 @default(50) @map("use_potion_at_hp_percent")
+  maxBattles            Int                 @map("max_battles")
+  
+  // Status
+  status                FarmSessionStatus   @default(running)
+  
+  // Progress
+  currentBattle         Int                 @default(0) @map("current_battle")
+  totalBattles          Int                 @default(0) @map("total_battles")
+  victories             Int                 @default(0)
+  defeats               Int                 @default(0)
+  
+  // Rewards Accumulated
+  totalXpGained         Int                 @default(0) @map("total_xp_gained")
+  totalGoldGained       Int                 @default(0) @map("total_gold_gained")
+  totalItemsDropped     Json                @default("[]") @map("total_items_dropped")
+  levelsGained          Int                 @default(0) @map("levels_gained")
+  startLevel            Int                 @map("start_level")
+  endLevel              Int                 @map("end_level")
+  potionsUsed           Int                 @default(0) @map("potions_used")
+  
+  // Stop reason
+  stoppedReason         String?             @map("stopped_reason")
+  stoppedMessage        String?             @map("stopped_message")
+  
+  // HP tracking
+  finalHp               Int?                @map("final_hp")
+  finalMaxHp            Int?                @map("final_max_hp")
+  
+  // Timestamps
+  startedAt             DateTime            @default(now()) @map("started_at")
+  lastBattleAt          DateTime?           @map("last_battle_at")
+  completedAt           DateTime?           @map("completed_at")
+  
+  character             Character           @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  
+  @@map("farm_sessions")
+  @@index([characterId])
+  @@index([status])
+  @@index([startedAt])
 }
