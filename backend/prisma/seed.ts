@@ -554,6 +554,52 @@ async function main() {
   });
   console.log(`✅ Created ${dungeons.count} dungeons`);
 
+  // Clear and seed dungeon floors
+  await prisma.dungeonFloor.deleteMany({});
+  
+  // Get the created dungeons to link floors
+  const goblinCave = await prisma.dungeon.findUnique({ where: { code: 'goblin_cave' } });
+  const darkForest = await prisma.dungeon.findUnique({ where: { code: 'dark_forest' } });
+  const ancientRuins = await prisma.dungeon.findUnique({ where: { code: 'ancient_ruins' } });
+
+  const floors: any[] = [];
+  
+  // Goblin Cave floors (3 floors)
+  if (goblinCave) {
+    floors.push(
+      { dungeonId: goblinCave.id, floorNumber: 1, enemyCode: 'goblin', isBoss: false },
+      { dungeonId: goblinCave.id, floorNumber: 2, enemyCode: 'goblin', isBoss: false },
+      { dungeonId: goblinCave.id, floorNumber: 3, enemyCode: 'orc', isBoss: true }
+    );
+  }
+
+  // Dark Forest floors (5 floors)
+  if (darkForest) {
+    floors.push(
+      { dungeonId: darkForest.id, floorNumber: 1, enemyCode: 'wolf', isBoss: false },
+      { dungeonId: darkForest.id, floorNumber: 2, enemyCode: 'wolf', isBoss: false },
+      { dungeonId: darkForest.id, floorNumber: 3, enemyCode: 'orc', isBoss: false },
+      { dungeonId: darkForest.id, floorNumber: 4, enemyCode: 'troll', isBoss: false },
+      { dungeonId: darkForest.id, floorNumber: 5, enemyCode: 'troll', isBoss: true }
+    );
+  }
+
+  // Ancient Ruins floors (7 floors)
+  if (ancientRuins) {
+    floors.push(
+      { dungeonId: ancientRuins.id, floorNumber: 1, enemyCode: 'dark_knight', isBoss: false },
+      { dungeonId: ancientRuins.id, floorNumber: 2, enemyCode: 'dark_knight', isBoss: false },
+      { dungeonId: ancientRuins.id, floorNumber: 3, enemyCode: 'dark_knight', isBoss: false },
+      { dungeonId: ancientRuins.id, floorNumber: 4, enemyCode: 'troll', isBoss: false },
+      { dungeonId: ancientRuins.id, floorNumber: 5, enemyCode: 'dark_knight', isBoss: false },
+      { dungeonId: ancientRuins.id, floorNumber: 6, enemyCode: 'dark_knight', isBoss: false },
+      { dungeonId: ancientRuins.id, floorNumber: 7, enemyCode: 'dragon', isBoss: true }
+    );
+  }
+
+  await prisma.dungeonFloor.createMany({ data: floors });
+  console.log(`✅ Created ${floors.length} dungeon floors`);
+
   // Clear and seed quests
   await prisma.quest.deleteMany({});
   const quests = await prisma.quest.createMany({
