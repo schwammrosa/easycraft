@@ -4,6 +4,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { logger } from './config/logger';
+import { PrismaClient } from '@prisma/client';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -94,7 +95,6 @@ app.post('/api/admin/seed', (_req, res) => {
 // Emergency floor creation endpoint
 app.post('/api/admin/create-floors', async (_req, res) => {
   try {
-    const { PrismaClient } = require('@prisma/client');
     const prisma = new PrismaClient();
     
     // Get all dungeons
