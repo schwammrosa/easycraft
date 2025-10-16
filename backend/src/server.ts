@@ -48,13 +48,14 @@ app.use('/api/marketplace', marketplaceRoutes);
 app.use('/api/dungeons', dungeonRoutes);
 
 // Temporary seed route (REMOVE IN PRODUCTION!)
-app.post('/api/admin/seed', async (_req, res) => {
+app.post('/api/admin/seed', (_req, res) => {
   try {
     const { exec } = require('child_process');
     exec('npx prisma db seed', { cwd: __dirname + '/../' }, (error: any, stdout: any, stderr: any) => {
       if (error) {
         logger.error(`Seed error: ${error.message}`);
-        return res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, error: error.message });
+        return;
       }
       if (stderr) {
         logger.error(`Seed stderr: ${stderr}`);
