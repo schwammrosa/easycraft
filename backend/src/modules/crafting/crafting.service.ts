@@ -28,16 +28,30 @@ export class CraftingService {
       ],
     });
 
-    return recipes;
+    // Parse JSON fields for frontend
+    return recipes.map(recipe => ({
+      ...recipe,
+      ingredients: typeof recipe.ingredients === 'string' 
+        ? JSON.parse(recipe.ingredients as string)
+        : recipe.ingredients,
+    }));
   }
 
   async getAllRecipes() {
-    return await prisma.craftingRecipe.findMany({
+    const recipes = await prisma.craftingRecipe.findMany({
       orderBy: [
         { category: 'asc' },
         { requiredLevel: 'asc' },
       ],
     });
+
+    // Parse JSON fields for frontend
+    return recipes.map(recipe => ({
+      ...recipe,
+      ingredients: typeof recipe.ingredients === 'string' 
+        ? JSON.parse(recipe.ingredients as string)
+        : recipe.ingredients,
+    }));
   }
 
   async craftItem(characterId: number, data: CraftItemDTO): Promise<CraftResult> {
