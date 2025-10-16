@@ -91,6 +91,72 @@ app.post('/api/admin/seed', (_req, res) => {
   }
 });
 
+// Emergency floor creation endpoint
+app.post('/api/admin/create-floors', async (_req, res) => {
+  try {
+    const { PrismaClient } = require('@prisma/client');
+    const prisma = new PrismaClient();
+    
+    // Get all dungeons
+    const dungeons = await prisma.dungeon.findMany({ orderBy: { id: 'asc' } });
+    
+    if (dungeons.length === 0) {
+      return res.status(400).json({ success: false, error: 'No dungeons found. Run seed first!' });
+    }
+    
+    // Clear existing floors
+    await prisma.dungeonFloor.deleteMany({});
+    
+    const floors: any[] = [];
+    
+    // Goblin Cave (first dungeon)
+    if (dungeons[0]) {
+      floors.push(
+        { dungeonId: dungeons[0].id, floorNumber: 1, enemyCode: 'goblin', isBoss: false },
+        { dungeonId: dungeons[0].id, floorNumber: 2, enemyCode: 'goblin', isBoss: false },
+        { dungeonId: dungeons[0].id, floorNumber: 3, enemyCode: 'orc', isBoss: true }
+      );
+    }
+    
+    // Dark Forest (second dungeon)
+    if (dungeons[1]) {
+      floors.push(
+        { dungeonId: dungeons[1].id, floorNumber: 1, enemyCode: 'wolf', isBoss: false },
+        { dungeonId: dungeons[1].id, floorNumber: 2, enemyCode: 'wolf', isBoss: false },
+        { dungeonId: dungeons[1].id, floorNumber: 3, enemyCode: 'orc', isBoss: false },
+        { dungeonId: dungeons[1].id, floorNumber: 4, enemyCode: 'troll', isBoss: false },
+        { dungeonId: dungeons[1].id, floorNumber: 5, enemyCode: 'troll', isBoss: true }
+      );
+    }
+    
+    // Ancient Ruins (third dungeon)
+    if (dungeons[2]) {
+      floors.push(
+        { dungeonId: dungeons[2].id, floorNumber: 1, enemyCode: 'dark_knight', isBoss: false },
+        { dungeonId: dungeons[2].id, floorNumber: 2, enemyCode: 'dark_knight', isBoss: false },
+        { dungeonId: dungeons[2].id, floorNumber: 3, enemyCode: 'dark_knight', isBoss: false },
+        { dungeonId: dungeons[2].id, floorNumber: 4, enemyCode: 'troll', isBoss: false },
+        { dungeonId: dungeons[2].id, floorNumber: 5, enemyCode: 'dark_knight', isBoss: false },
+        { dungeonId: dungeons[2].id, floorNumber: 6, enemyCode: 'dark_knight', isBoss: false },
+        { dungeonId: dungeons[2].id, floorNumber: 7, enemyCode: 'dragon', isBoss: true }
+      );
+    }
+    
+    await prisma.dungeonFloor.createMany({ data: floors });
+    await prisma.$disconnect();
+    
+    logger.info(`Created ${floors.length} dungeon floors via emergency endpoint`);
+    res.json({ 
+      success: true, 
+      message: `Created ${floors.length} dungeon floors!`,
+      floors: floors.length 
+    });
+  } catch (error: any) {
+    logger.error('Error creating floors:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Error handling
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   logger.error(err);
