@@ -18,6 +18,12 @@ async function createFloors() {
       process.exit(1);
     }
     
+    // Get all enemies to map codes to IDs
+    const enemies = await prisma.enemy.findMany();
+    const enemyMap = new Map(enemies.map(e => [e.code, e.id]));
+    
+    console.log(`Found ${enemies.length} enemies`);
+    
     // Clear existing floors
     console.log('🧹 Clearing existing floors...');
     await prisma.dungeonFloor.deleteMany({});
@@ -27,20 +33,20 @@ async function createFloors() {
     // Goblin Cave (first dungeon)
     console.log(`Creating floors for: ${dungeons[0].name} (id: ${dungeons[0].id})`);
     floors.push(
-      { dungeonId: dungeons[0].id, floorNumber: 1, enemyCode: 'goblin', isBoss: false },
-      { dungeonId: dungeons[0].id, floorNumber: 2, enemyCode: 'goblin', isBoss: false },
-      { dungeonId: dungeons[0].id, floorNumber: 3, enemyCode: 'orc', isBoss: true }
+      { dungeonId: dungeons[0].id, floorNumber: 1, enemyId: enemyMap.get('goblin')!, isBoss: false },
+      { dungeonId: dungeons[0].id, floorNumber: 2, enemyId: enemyMap.get('goblin')!, isBoss: false },
+      { dungeonId: dungeons[0].id, floorNumber: 3, enemyId: enemyMap.get('orc')!, isBoss: true }
     );
     
     // Dark Forest (second dungeon)
     if (dungeons[1]) {
       console.log(`Creating floors for: ${dungeons[1].name} (id: ${dungeons[1].id})`);
       floors.push(
-        { dungeonId: dungeons[1].id, floorNumber: 1, enemyCode: 'wolf', isBoss: false },
-        { dungeonId: dungeons[1].id, floorNumber: 2, enemyCode: 'wolf', isBoss: false },
-        { dungeonId: dungeons[1].id, floorNumber: 3, enemyCode: 'orc', isBoss: false },
-        { dungeonId: dungeons[1].id, floorNumber: 4, enemyCode: 'troll', isBoss: false },
-        { dungeonId: dungeons[1].id, floorNumber: 5, enemyCode: 'troll', isBoss: true }
+        { dungeonId: dungeons[1].id, floorNumber: 1, enemyId: enemyMap.get('wolf')!, isBoss: false },
+        { dungeonId: dungeons[1].id, floorNumber: 2, enemyId: enemyMap.get('wolf')!, isBoss: false },
+        { dungeonId: dungeons[1].id, floorNumber: 3, enemyId: enemyMap.get('orc')!, isBoss: false },
+        { dungeonId: dungeons[1].id, floorNumber: 4, enemyId: enemyMap.get('troll')!, isBoss: false },
+        { dungeonId: dungeons[1].id, floorNumber: 5, enemyId: enemyMap.get('troll')!, isBoss: true }
       );
     }
     
@@ -48,13 +54,13 @@ async function createFloors() {
     if (dungeons[2]) {
       console.log(`Creating floors for: ${dungeons[2].name} (id: ${dungeons[2].id})`);
       floors.push(
-        { dungeonId: dungeons[2].id, floorNumber: 1, enemyCode: 'dark_knight', isBoss: false },
-        { dungeonId: dungeons[2].id, floorNumber: 2, enemyCode: 'dark_knight', isBoss: false },
-        { dungeonId: dungeons[2].id, floorNumber: 3, enemyCode: 'dark_knight', isBoss: false },
-        { dungeonId: dungeons[2].id, floorNumber: 4, enemyCode: 'troll', isBoss: false },
-        { dungeonId: dungeons[2].id, floorNumber: 5, enemyCode: 'dark_knight', isBoss: false },
-        { dungeonId: dungeons[2].id, floorNumber: 6, enemyCode: 'dark_knight', isBoss: false },
-        { dungeonId: dungeons[2].id, floorNumber: 7, enemyCode: 'dragon', isBoss: true }
+        { dungeonId: dungeons[2].id, floorNumber: 1, enemyId: enemyMap.get('dark_knight')!, isBoss: false },
+        { dungeonId: dungeons[2].id, floorNumber: 2, enemyId: enemyMap.get('dark_knight')!, isBoss: false },
+        { dungeonId: dungeons[2].id, floorNumber: 3, enemyId: enemyMap.get('dark_knight')!, isBoss: false },
+        { dungeonId: dungeons[2].id, floorNumber: 4, enemyId: enemyMap.get('troll')!, isBoss: false },
+        { dungeonId: dungeons[2].id, floorNumber: 5, enemyId: enemyMap.get('dark_knight')!, isBoss: false },
+        { dungeonId: dungeons[2].id, floorNumber: 6, enemyId: enemyMap.get('dark_knight')!, isBoss: false },
+        { dungeonId: dungeons[2].id, floorNumber: 7, enemyId: enemyMap.get('dragon')!, isBoss: true }
       );
     }
     
