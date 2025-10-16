@@ -1,12 +1,15 @@
 # 📚 EasyCraft - Índice de Documentação
 
+**Última Atualização:** 16/10/2025  
+**Versão:** 2.0.0 (Reorganizada)
+
 ## Navegação Rápida
 
-Este é o índice completo da documentação do projeto EasyCraft. Use este guia para encontrar rapidamente as informações que você precisa.
+Documentação completamente reorganizada e atualizada. 54 arquivos obsoletos foram removidos, restando apenas documentação essencial e consolidada.
 
 ---
 
-## 📖 Documentos Principais
+## 📖 Documentação Core (11 arquivos)
 
 ### 1. [Visão Geral do Projeto](01_visao_geral.md)
 **O que é**: Elevator pitch, objetivos, público-alvo e diferenciais  
@@ -183,6 +186,105 @@ Este é o índice completo da documentação do projeto EasyCraft. Use este guia
 - Drop tables por inimigo
 - Métricas de balanceamento
 - KPIs e ajustes
+
+---
+
+## 🎮 Sistemas Implementados (3 arquivos)
+
+### [Farm Mode](FARM_MODE.md)
+**O que é**: Sistema de batalha automática assíncrona  
+**Para quem**: Jogadores, desenvolvedores  
+**Status**: ✅ Implementado e funcional
+
+**Funcionalidades**:
+- Batalhas automáticas em background
+- Uso automático de poções
+- Progresso em tempo real
+- Sistema de fuga com penalidade
+- Limite de 500 batalhas por sessão
+
+### [Sistema de Coleta (Gathering)](GATHERING_SYSTEM.md)
+**O que é**: Sistema de coleta automática de recursos  
+**Para quem**: Jogadores, desenvolvedores  
+**Status**: ✅ Implementado e funcional
+
+**Funcionalidades**:
+- 15 nodos de coleta (Wood, Ore, Herb, Crystal, Leather)
+- Coleta automática assíncrona
+- Progresso em tempo real
+- XP e level up automático
+- Integração com crafting e quests
+
+### [Sistema de Conquistas (Achievements)](ACHIEVEMENT.md)
+**O que é**: Sistema de achievements e recompensas  
+**Para quem**: Game designers, desenvolvedores  
+**Status**: 📋 Planejado
+
+---
+
+## 📊 Gestão do Projeto (5 arquivos)
+
+### [Status Completo](STATUS_COMPLETO.md) ⭐ NOVO
+**O que é**: Status consolidado de todo o projeto  
+**Para quem**: Todos  
+**Tempo de leitura**: 15 minutos
+
+**Conteúdo**:
+- Status de produção (URLs, infraestrutura)
+- Todos os sistemas implementados
+- Estatísticas do projeto
+- Progresso por sprint
+- Melhorias futuras planejadas
+- KPIs e objetivos
+
+### [Changelog](CHANGELOG.md) ⭐ NOVO
+**O que é**: Histórico completo de mudanças do projeto  
+**Para quem**: Desenvolvedores, stakeholders  
+**Tempo de leitura**: 20 minutos
+
+**Conteúdo**:
+- Todas as versões desde v0.0.1
+- Features adicionadas por versão
+- Código e estatísticas
+- Sprints resumidos
+
+### [Bugs e Issues](BUGS.md)
+**O que é**: Rastreamento de bugs conhecidos  
+**Para quem**: QA, desenvolvedores  
+**Atualização**: Contínua
+
+### [Melhorias Prioritárias](MELHORIAS_PRIORITARIAS.md)
+**O que é**: Lista de melhorias planejadas  
+**Para quem**: Product owners, desenvolvedores  
+**Conteúdo**: 30+ melhorias categorizadas por prioridade
+
+### [Guia de Contribuição](CONTRIBUTING.md)
+**O que é**: Como contribuir para o projeto  
+**Para quem**: Novos contribuidores
+
+---
+
+## 🚀 Setup & Deploy (2 arquivos)
+
+### [Guia de Setup](SETUP_GUIDE.md) ⭐ NOVO
+**O que é**: Guia único consolidado de setup  
+**Para quem**: Desenvolvedores  
+**Tempo de leitura**: 25 minutos
+
+**Conteúdo**:
+- Pré-requisitos
+- Setup local (Docker e Manual)
+- Deploy em produção (Vercel + Render)
+- Scripts disponíveis
+- Comandos do banco (Prisma)
+- Troubleshooting completo
+- Estrutura de pastas
+- Segurança
+
+### [Deploy em Produção](DEPLOY_SUCESSO.md)
+**O que é**: Guia completo de deploy  
+**Para quem**: DevOps, desenvolvedores  
+**Conteúdo**: Deploy no Vercel e Render
 
 ---
 

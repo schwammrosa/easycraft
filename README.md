@@ -181,26 +181,32 @@ easycraft/
 
 ## 📚 Documentação
 
-### Para Desenvolvedores
-- [Status do Projeto](docs/PROJECT_STATUS.md)
-- [Sprint 1 - Auth & Personagens](docs/SPRINT1_COMPLETE.md)
-- [Sprint 2 - Inventário](docs/SPRINT2_COMPLETE.md)
-- [Sprint 3 - Batalhas](docs/SPRINT3_COMPLETE.md)
-- [Sprint 4 - Quests](docs/SPRINT4_COMPLETE.md)
-- [Sprint 5 - Crafting & Consumíveis](docs/SPRINT5_COMPLETE.md)
-- [Sprint 6 - Marketplace](docs/SPRINT6_MARKETPLACE.md) ⭐ **NOVO**
-- [Comandos de Teste](backend/prisma/TEST_COMMANDS.md)
+### 📖 Início Rápido
+- **[Índice Completo](docs/00_indice.md)** - Navegação por toda documentação
+- **[Status Completo](docs/STATUS_COMPLETO.md)** ⭐ - Status consolidado do projeto
+- **[Setup Guide](docs/SETUP_GUIDE.md)** ⭐ - Guia de instalação e deploy
+- **[Changelog](docs/CHANGELOG.md)** ⭐ - Histórico de versões
+
+### 🎮 Sistemas
+- [Farm Mode](docs/FARM_MODE.md) - Batalha automática assíncrona
+- [Gathering System](docs/GATHERING_SYSTEM.md) - Coleta de recursos
+- [Achievements](docs/ACHIEVEMENT.md) - Sistema de conquistas (planejado)
+
+### 🔧 Documentação Técnica
+- [Visão Geral](docs/01_visao_geral.md)
+- [Mecânicas Detalhadas](docs/02_mecanicas_detalhadas.md)
+- [Stack Técnico](docs/03_requisitos_tecnicos.md)
+- [API Specification](docs/04_api_specification.md)
 - [Database Schema](docs/05_database_schema.sql)
-
-### Para Designers
 - [UI/UX Design](docs/06_ui_design.md)
+- [Roadmap](docs/07_roadmap.md)
 - [Fluxos de Usuário](docs/08_fluxos_usuario.md)
+- [Game Design](docs/09_game_design.md)
 
-### Para Game Designers
-- [Game Design Document](docs/09_game_design.md)
-
-### Gestão de Projeto
-- [Roadmap Completo](docs/07_roadmap.md)
+### 📊 Gestão
+- [Bugs](docs/BUGS.md) - Rastreamento de bugs
+- [Melhorias Prioritárias](docs/MELHORIAS_PRIORITARIAS.md)
+- [Como Contribuir](docs/CONTRIBUTING.md)
 
 ---
 
@@ -229,13 +235,12 @@ easycraft/
 - Logs Frontend: [Vercel Dashboard](https://vercel.com/dashboard)
 
 ### **Documentação**
-- 📊 [Status Atual do Projeto](docs/STATUS_ATUAL.md)
-- 🔥 [Farm Mode - Sistema de Batalha Automática](docs/FARM_MODE.md) ⭐ **NOVO**
-- 🧪 [Testes de Status do Farm](docs/FARM_STATUS_TEST.md)
-- 🚀 [Guia Completo de Deploy](DEPLOY_SUCESSO.md)
-- 🎯 [Próximos Passos Imediatos](docs/PROXIMOS_PASSOS_IMEDIATOS.md)
-- 📋 [Roadmap Completo](PROXIMOS_PASSOS.md)
-- ⚡ [Quick Deploy Guide](docs/QUICK_DEPLOY.md)
+- 📊 [Status Completo do Projeto](docs/STATUS_COMPLETO.md) ⭐ **ATUALIZADO**
+- 🔥 [Farm Mode - Batalha Automática](docs/FARM_MODE.md)
+- 🌲 [Gathering System - Coleta de Recursos](docs/GATHERING_SYSTEM.md)
+- 🚀 [Guia de Setup](docs/SETUP_GUIDE.md) ⭐ **NOVO**
+- 📋 [Changelog Completo](docs/CHANGELOG.md) ⭐ **NOVO**
+- 📖 [Índice da Documentação](docs/00_indice.md)
 
 ---
 
