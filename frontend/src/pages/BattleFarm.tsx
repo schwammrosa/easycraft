@@ -11,6 +11,7 @@ import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { CharacterAvatar } from '../components/CharacterAvatar';
 
 export function BattleFarm() {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ export function BattleFarm() {
   const [selectedEnemy, setSelectedEnemy] = useState<string>('');
   const [selectedPotion, setSelectedPotion] = useState<string>('');
   const [hpPercent, setHpPercent] = useState<number>(50);
-  const [maxBattles, setMaxBattles] = useState<number>(50);
+  const [maxBattles, setMaxBattles] = useState<number>(10);
   
   // Tab state
   const [activeTab, setActiveTab] = useState<'config' | 'history'>('config');
@@ -369,13 +370,58 @@ export function BattleFarm() {
               </div>
             </div>
 
-            <div className="mt-4 bg-accent-blue/10 border border-accent-blue rounded-lg p-3">
-              <p className="text-sm">
-                <strong className="text-accent-blue">Lutando contra:</strong> {activeSession.enemyName}
-              </p>
-              <p className="text-sm text-text-secondary mt-1">
-                💊 Poções usadas: {activeSession.potionsUsed} | HP: {selectedCharacter?.hp}/{selectedCharacter?.maxHp}
-              </p>
+            {/* Battle Visual Arena */}
+            <div className="mt-4 bg-gradient-to-b from-green-900/20 to-green-800/20 border-2 border-green-700/50 rounded-lg p-6 relative overflow-hidden">
+              {/* Background Pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="w-full h-full" style={{
+                  backgroundImage: 'repeating-linear-gradient(0deg, #22c55e 0px, #22c55e 1px, transparent 1px, transparent 20px), repeating-linear-gradient(90deg, #22c55e 0px, #22c55e 1px, transparent 1px, transparent 20px)',
+                  backgroundSize: '20px 20px'
+                }}></div>
+              </div>
+              
+              <div className="relative z-10">
+                <p className="text-sm text-center mb-4">
+                  <strong className="text-accent-blue">⚔️ Lutando contra: {activeSession.enemyName}</strong>
+                </p>
+                
+                {/* Battle Arena */}
+                <div className="flex items-center justify-between gap-4">
+                  {/* Player Avatar */}
+                  <div className="text-center">
+                    <CharacterAvatar
+                      headVariant={selectedCharacter.headVariant}
+                      armsVariant={selectedCharacter.armsVariant}
+                      legsVariant={selectedCharacter.legsVariant}
+                      feetVariant={selectedCharacter.feetVariant}
+                      size="lg"
+                      className="animate-bounce"
+                    />
+                    <p className="text-xs mt-2 font-bold text-accent-gold">{selectedCharacter.name}</p>
+                    <p className="text-xs text-accent-green">HP: {selectedCharacter?.hp}/{selectedCharacter?.maxHp}</p>
+                  </div>
+                  
+                  {/* VS Badge */}
+                  <div className="flex-shrink-0">
+                    <div className="bg-accent-red text-white font-bold text-2xl px-4 py-2 rounded-lg rotate-12 shadow-lg">
+                      VS
+                    </div>
+                  </div>
+                  
+                  {/* Enemy Avatar */}
+                  <div className="text-center">
+                    <div className="w-48 h-48 bg-gradient-to-br from-red-900 to-red-700 rounded-lg border-2 border-red-500 flex items-center justify-center shadow-xl animate-pulse">
+                      <span className="text-8xl">👹</span>
+                    </div>
+                    <p className="text-xs mt-2 font-bold text-accent-red">{activeSession.enemyName}</p>
+                    <p className="text-xs text-text-secondary">💀 Inimigo</p>
+                  </div>
+                </div>
+                
+                <p className="text-sm text-text-secondary mt-4 text-center">
+                  💊 Poções usadas: {activeSession.potionsUsed}
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -628,7 +674,7 @@ export function BattleFarm() {
                 className="w-full bg-bg-input border border-primary-medium rounded-lg px-4 py-3 focus:outline-none focus:border-accent-gold"
               />
               <p className="text-xs text-text-secondary mt-1">
-                Recomendado: 20-100 batalhas
+                ⏱️ Tempo estimado: ~{Math.ceil(maxBattles * 3 / 60)} min ({maxBattles * 3}s)
               </p>
             </div>
                 </div>
