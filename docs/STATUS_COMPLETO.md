@@ -198,10 +198,10 @@
 - Vite
 - TypeScript
 - TailwindCSS 3
-- Zustand (state)
-- React Query
-- Axios
+- Zustand (state management)
+- Axios (HTTP client)
 - Lucide React (ícones)
+- Tailwind Merge (utility classes)
 
 ### DevOps
 - GitHub (versionamento)

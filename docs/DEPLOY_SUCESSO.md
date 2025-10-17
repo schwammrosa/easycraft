@@ -23,7 +23,7 @@ Custo:     R$ 0,00/mês (100% GRÁTIS!)
 │         VERCEL (Frontend - React)               │
 │  • React + TypeScript + Vite                    │
 │  • TailwindCSS + Lucide Icons                   │
-│  • React Query + Zustand                        │
+│  • Zustand + Axios                              │
 │  • Deploy automático do GitHub                  │
 │  • HTTPS gratuito                               │
 └─────────────────┬───────────────────────────────┘
@@ -229,7 +229,7 @@ curl https://easycraft-backend.onrender.com/api/items
 - [Documentação Vercel](https://vercel.com/docs)
 - [Documentação Render](https://render.com/docs)
 - [Prisma Docs](https://www.prisma.io/docs)
-- [React Query](https://tanstack.com/query)
+- [Zustand](https://zustand-demo.pmnd.rs/)
 
 ---
 

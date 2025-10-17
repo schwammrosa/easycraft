@@ -49,12 +49,10 @@ export function Gathering() {
         gatheringService.getGatherHistory(character.id, 10),
       ]);
 
-      console.log('📦 Nodos carregados:', nodesData);
       setNodes(nodesData);
       setActiveSession(activeSessionData);
       setHistory(historyData);
     } catch (err: any) {
-      console.error('❌ Erro ao carregar gathering:', err);
       setError(err.response?.data?.error?.message || 'Erro ao carregar dados');
     } finally {
       setLoading(false);

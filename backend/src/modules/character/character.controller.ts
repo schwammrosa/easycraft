@@ -16,7 +16,6 @@ export class CharacterController {
       });
     } catch (error) {
       logger.error('Get characters error:', error);
-      console.error('Get characters detailed error:', error);
 
       res.status(500).json({
         success: false,
@@ -93,7 +92,6 @@ export class CharacterController {
       });
     } catch (error) {
       logger.error('Create character error:', error);
-      console.error('Create character detailed error:', error);
 
       if (error instanceof Error) {
         if (error.message.includes('Máximo de') || error.message === 'Nome já está em uso') {

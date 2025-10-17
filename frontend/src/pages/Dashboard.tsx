@@ -49,7 +49,7 @@ export function Dashboard() {
         const updated = await characterService.getCharacter(selectedCharacter.id);
         selectCharacter(updated);
       } catch (error) {
-        console.error('Error loading character:', error);
+        // Error handled by UI
       } finally {
         setLoading(false);
       }
@@ -68,7 +68,6 @@ export function Dashboard() {
       selectCharacter(updated);
       toast.success('Aparência atualizada com sucesso!');
     } catch (error) {
-      console.error('Error updating appearance:', error);
       throw error;
     }
   };

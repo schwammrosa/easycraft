@@ -37,7 +37,6 @@ export function Crafting() {
       setRecipes(recipesData);
       setInventory(inventoryData);
     } catch (err: any) {
-      console.error('❌ Error loading data:', err);
       setError('Erro ao carregar dados');
     } finally {
       setLoading(false);

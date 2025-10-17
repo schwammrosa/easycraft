@@ -62,14 +62,12 @@ export function Inventory() {
     if (equipping) return; // Prevent double-click
     
     if (!selectedCharacter || !item.item.slot) {
-      console.warn('Cannot equip:', { hasCharacter: !!selectedCharacter, slot: item.item.slot, item: item.item });
       setError('Este item não pode ser equipado');
       return;
     }
 
     setEquipping(true);
     try {
-      console.log('Equiping item:', { itemId: item.id, slot: item.item.slot, itemName: item.item.name });
       await inventoryService.equipItem(selectedCharacter.id, item.id, item.item.slot);
       await loadData();
       setSelectedItem(null);
@@ -77,11 +75,6 @@ export function Inventory() {
     } catch (err: any) {
       const errorData = err.response?.data;
       const errorMessage = errorData?.error?.message || 'Erro ao equipar item';
-      console.error('Equip error FULL:', {
-        status: err.response?.status,
-        data: errorData,
-        message: errorMessage,
-      });
       setError(errorMessage);
     } finally {
       setEquipping(false);

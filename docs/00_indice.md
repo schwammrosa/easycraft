@@ -1,7 +1,7 @@
 # 📚 EasyCraft - Índice de Documentação
 
-**Última Atualização:** 16/10/2025  
-**Versão:** 2.0.0 (Reorganizada)
+**Última Atualização:** 17/10/2025  
+**Versão:** 2.1.0 (Stack atualizado + Decisões arquiteturais)
 
 ## Navegação Rápida
 
@@ -222,7 +222,19 @@ Documentação completamente reorganizada e atualizada. 54 arquivos obsoletos fo
 
 ---
 
-## 📊 Gestão do Projeto (5 arquivos)
+## 📊 Gestão do Projeto (6 arquivos)
+
+### [Decisões Arquiteturais](DECISOES_ARQUITETURAIS.md) ⭐ NOVO
+**O que é**: Decisões de stack e arquitetura do projeto  
+**Para quem**: Desenvolvedores, arquitetos  
+**Tempo de leitura**: 20 minutos
+
+**Conteúdo**:
+- Stack tecnológico atual (com justificativas)
+- Decisões arquiteturais (Zustand vs React Query, etc)
+- Dependências removidas e motivos
+- Padrões de código estabelecidos
+- Quando reavaliar decisões
 
 ### [Status Completo](STATUS_COMPLETO.md) ⭐ NOVO
 **O que é**: Status consolidado de todo o projeto  

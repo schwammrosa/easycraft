@@ -15,8 +15,8 @@
   - Lucide React para ícones
 
 **State Management**: 
-- Zustand ou React Context (para estado simples)
-- React Query para cache de API
+- **Zustand** para estado global (autenticação, personagem selecionado)
+- Axios para requisições HTTP (sem cache layer)
 
 **Routing**: React Router v6+
 
@@ -129,8 +129,6 @@
     "prisma": "^5.7.0",
     "@prisma/client": "^5.7.0",
     "zod": "^3.22.4",
-    "express-rate-limit": "^7.1.5",
-    "ioredis": "^5.3.2",
     "express-async-errors": "^3.1.1"
   },
   "devDependencies": {
@@ -153,10 +151,10 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.1",
     "zustand": "^4.4.7",
-    "@tanstack/react-query": "^5.14.2",
     "axios": "^1.6.2",
     "lucide-react": "^0.303.0",
-    "clsx": "^2.0.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.6.0",
     "tailwind-merge": "^2.2.0"
   },
   "devDependencies": {

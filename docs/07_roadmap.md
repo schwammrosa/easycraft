@@ -29,11 +29,13 @@
 - [ ] Testar conexão com banco de dados
 
 #### 0.3 Setup Frontend
-- [ ] Inicializar projeto React + Vite + TypeScript
-- [ ] Configurar TailwindCSS
-- [ ] Instalar dependências (React Router, Zustand, React Query)
-- [ ] Criar estrutura de pastas
-- [ ] Testar build e hot reload
+- [x] Inicializar projeto React + Vite + TypeScript
+- [x] Configurar TailwindCSS
+- [x] Instalar dependências (React Router, Zustand, Axios)
+- [x] Criar estrutura de pastas
+- [x] Testar build e hot reload
+
+**Nota**: React Query foi planejado mas substituído por Zustand + fetch manual para simplicidade
 
 #### 0.4 Assets Iniciais
 - [ ] Criar ou baixar 6 variantes de cada slot (head, arms, legs, feet)

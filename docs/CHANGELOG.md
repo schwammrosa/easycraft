@@ -295,7 +295,7 @@ Todas as mudanças notáveis do projeto serão documentadas neste arquivo.
 - Páginas: Login, Register, CharacterSelection, CharacterCreation
 - Rotas privadas com autenticação
 - Zustand para state management
-- React Query para data fetching
+- Axios para requisições HTTP
 
 **Backend:**
 - Express + TypeScript
